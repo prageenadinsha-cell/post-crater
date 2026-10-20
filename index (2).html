@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post Template Maker — Free Facebook News Post Generator</title>
+<meta name="description" content="Free online tool to create Facebook news posts with headline templates, colour highlights, 3:4 and 1:1 sizes, and short videos. Runs in your browser — your images are never uploaded.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600;800&family=Merriweather:ital,wght@0,700;0,900;1,700&family=Playfair+Display:wght@700;900&family=Anton&family=Bebas+Neue&family=Archivo+Black&family=Oswald:wght@500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3efe6; --panel:#ffffff; --ink:#1c1a17; --ink-soft:#5b564c;
+    --line:#e2dccc; --accent:#a3312a; --accent-2:#16305c; --accent-soft:#eee3d3;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#161512; --panel:#211f1b; --ink:#f2ede2; --ink-soft:#b8b1a2;
+      --line:#3a362e; --accent:#e0655c; --accent-2:#7ea0e0; --accent-soft:#2a2620;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#161512; --panel:#211f1b; --ink:#f2ede2; --ink-soft:#b8b1a2;
+    --line:#3a362e; --accent:#e0655c; --accent-2:#7ea0e0; --accent-soft:#2a2620;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:'Inter','Noto Sans Sinhala',sans-serif; min-height:100vh; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:28px 20px 60px; }
+  header{margin-bottom:22px;}
+  header h1{ font-family:'Archivo Black','Inter',sans-serif; font-size:clamp(22px,3vw,30px); margin:0 0 6px; letter-spacing:-0.01em; }
+  header p{ margin:0; color:var(--ink-soft); font-size:14.5px; max-width:640px; line-height:1.5; }
+  .layout{ display:grid; grid-template-columns:minmax(280px,380px) 1fr; gap:22px; align-items:start; }
+  @media (max-width:860px){ .layout{grid-template-columns:1fr;} }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px; }
+  .field{margin-bottom:18px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{ display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:8px; }
+  .templates{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .tpl-btn{
+    border:2px solid var(--line); background:var(--accent-soft); border-radius:10px;
+    padding:8px 4px 10px; cursor:pointer; display:flex; flex-direction:column; align-items:center;
+    gap:6px; color:var(--ink); font-size:10.5px; font-weight:600; transition:border-color .15s ease, transform .1s ease;
+  }
+  .tpl-btn:hover{transform:translateY(-1px);}
+  .tpl-btn.active{ border-color:var(--accent); background:var(--panel); }
+  .tpl-swatch{ width:100%; height:40px; border-radius:6px; background:#ccc; }
+  .sw1{background:linear-gradient(180deg,#8a6a4c 0%,#8a6a4c 60%, #f3ecd9 60%);}
+  .sw2{background:linear-gradient(180deg,#5c7a54 0%,#5c7a54 65%, #ffffff 65%);}
+  .sw3{background:linear-gradient(180deg,#2a2a2a 0%,#2a2a2a 55%, #101010 55%);}
+  .sw4{background:linear-gradient(180deg,#3a3f4a 0%,#3a3f4a 62%, #ffffff 62%);}
+  .sw5{background:linear-gradient(180deg,#7192b0 0%,#7192b0 58%, #ffffff 58%);}
+  .sw6{background:linear-gradient(180deg,#5a6a52 0%,#5a6a52 62%, #ffffff 62%);}
+  .sw7{background:linear-gradient(180deg,#22242a 0%,#22242a 100%);}
+  textarea, input[type=text]{
+    width:100%; font-family:inherit; font-size:14.5px; padding:11px 12px; border-radius:9px;
+    border:1.5px solid var(--line); background:var(--bg); color:var(--ink); resize:vertical;
+  }
+  select{
+    width:100%; font-family:inherit; font-size:14.5px; padding:11px 12px; border-radius:9px;
+    border:1.5px solid var(--line); background:var(--bg); color:var(--ink);
+  }
+  textarea:focus, input[type=text]:focus, select:focus{ outline:none; border-color:var(--accent-2); }
+  .upload-box{
+    border:1.5px dashed var(--line); border-radius:10px; padding:14px; text-align:center;
+    cursor:pointer; background:var(--bg); font-size:13px; color:var(--ink-soft);
+  }
+  .upload-box:hover{border-color:var(--accent-2);}
+  .upload-box input{display:none;}
+  .upload-thumb{ max-width:100%; max-height:90px; border-radius:6px; margin-top:10px; display:none; }
+  .hint{ font-size:11.5px; color:var(--ink-soft); margin-top:6px; line-height:1.4; }
+  .fit-toggle{ display:flex; gap:6px; margin-top:8px; }
+  .fit-toggle button{
+    flex:1; padding:7px 6px; font-size:12px; border-radius:7px; border:1.5px solid var(--line);
+    background:var(--bg); color:var(--ink); cursor:pointer; font-family:inherit;
+  }
+  .fit-toggle button.active{ border-color:var(--accent-2); background:var(--accent-soft); font-weight:700; }
+  .slider-row{ margin-top:10px; }
+  .slider-row .slider-label{ display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-soft); margin-bottom:4px; }
+  input[type=range]{ width:100%; accent-color:var(--accent-2); }
+  .color-row{ display:flex; align-items:center; gap:10px; margin-top:10px; }
+  input[type=color]{ width:44px; height:36px; border:1.5px solid var(--line); border-radius:8px; padding:2px; background:var(--panel); cursor:pointer; }
+  .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .download-btn{
+    width:100%; padding:14px; border:none; border-radius:10px; background:var(--accent);
+    color:#fff; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:6px;
+  }
+  .download-btn:hover{filter:brightness(1.06);}
+  .download-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .secondary-btn{
+    width:100%; padding:11px; border:1.5px solid var(--accent-2); border-radius:9px; background:var(--panel);
+    color:var(--accent-2); font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:10px;
+  }
+  .secondary-btn:hover{ background:var(--accent-soft); }
+  .secondary-btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .suggestions{ display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+  .suggestion-chip{
+    text-align:left; padding:9px 12px; border-radius:8px; border:1.5px solid var(--line);
+    background:var(--bg); color:var(--ink); font-size:13px; cursor:pointer; font-family:inherit;
+  }
+  .suggestion-chip:hover{ border-color:var(--accent-2); background:var(--accent-soft); }
+  .confirm-row{ display:flex; align-items:flex-start; gap:8px; font-weight:400; font-size:12px; color:var(--ink-soft); line-height:1.4; }
+  .confirm-row input{ margin-top:3px; }
+  .paint-chips{ display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 4px; }
+  .paint-chip{ padding:8px 14px; border-radius:999px; border:1.5px solid var(--line); background:var(--bg); color:var(--ink); font-weight:700; font-size:14px; cursor:pointer; font-family:inherit; }
+  .paint-chip:hover{ filter:brightness(1.08); }
+  .preset-row{ display:flex; gap:8px; margin:10px 0 0; }
+  .preset-sw{ width:48px; height:30px; border-radius:8px; border:2px solid var(--line); cursor:pointer; padding:0; }
+  .preset-sw:hover{ border-color:var(--accent-2); }
+  .ad-slot{ margin:0 auto 18px; text-align:center; max-width:100%; overflow:hidden; }
+  .site-footer{ margin-top:36px; padding-top:16px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-soft); text-align:center; line-height:1.6; }
+  .hl-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .hl-row input[type=text]{ flex:1; min-width:0; }
+  .hl-row button{ width:34px; height:36px; border-radius:8px; border:1.5px solid var(--line); background:var(--bg); color:var(--ink-soft); cursor:pointer; font-size:14px; }
+  .hl-row button:hover{ border-color:var(--accent); color:var(--accent); }
+  .preview-col{ position:sticky; top:20px; }
+  .canvas-shell{
+    --ar:0.75;
+    width:min(100%, calc((100vh - 170px) * var(--ar)));
+    aspect-ratio:var(--ar);
+    margin:0 auto;
+    background:#000; border-radius:14px; overflow:hidden; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+  }
+  @media (max-width:860px){
+    .preview-col{ order:-1; position:sticky; top:0; z-index:20; background:var(--bg); padding:6px 0 8px; }
+    .canvas-shell{ width:min(100%, calc(44vh * var(--ar))); }
+    .meta-row{ margin-top:6px; }
+  }
+  .sw8{background:linear-gradient(180deg,#6d8fb5 0%,#6d8fb5 66%, #c8102e 66%, #c8102e 69%, #fff 69%);}
+  .sw9{background:linear-gradient(180deg,#556 0%,#556 60%, #0b0b0b 60%);}
+  .sw10{background:linear-gradient(180deg,#000 0%,#7a7466 40%,#8a8576 100%);}
+  .sw11{background:linear-gradient(180deg,#6a7a90 0%,#2b303a 70%, #000 70%);}
+  .sw12{background:linear-gradient(180deg,#7192b0 0%,#3b4a5e 60%,#14161a 100%);}
+  .sw13{background:linear-gradient(180deg,#8a7a5c 0%,#3a3328 62%,#0d0d0d 100%);}
+  .sw15{background:linear-gradient(180deg,#5b7fa6 0%,#2b2f38 100%);border-left:5px solid #c8102e;border-right:5px solid #012169;}
+  .sw16{background:linear-gradient(90deg,#6a8fb0 0%,#6a8fb0 40%,#000 62%,#000 100%);}
+  .sw17{background:linear-gradient(180deg,#7a6a52 0%,#3a3228 65%,#0d0d0d 100%);}
+  .sw14{background:linear-gradient(180deg,#5b6f8c 0%,#2a3346 62%,#0d0f14 92%,#f5b800 92%);}
+  canvas{ width:100%; height:100%; display:block; }
+  .meta-row{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:var(--ink-soft); }
+  .status-line{ font-size:11.5px; color:var(--ink-soft); margin-top:8px; min-height:16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Post Template Maker</h1>
+    <p>Template එකක් තෝරගෙන, headline එක ලියලා, reference image එක upload කරලා — output size එකක් තෝරගෙන 1080p වලින් ready කරගන්න.</p>
+  </header>
+
+  <!-- ================= ADSTERRA SLOT 1 (TOP BANNER) =================
+       Paste your Adsterra Banner (e.g. 728x90 or Native Banner) code inside this div.
+       Keep ads clearly separated from the tool buttons (Adsterra policy: no misleading placement). -->
+  <div class="ad-slot" id="ad-top"></div>
+
+  <div class="layout">
+    <div class="panel">
+
+      <div class="field">
+        <label>Page/Brand නම</label>
+        <input type="text" id="pageNameInput" value="" placeholder="ඔබේ page නම type කරන්න (හිස්ව තිබුණොත් badge එක පෙන්නෙ නෑ)">
+      </div>
+
+      <div class="field">
+        <label>Target Country (news check, flag, logo design මේ රටට අනුව)</label>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;">
+          <input type="text" id="countryInput" list="countryList" value="United Kingdom" placeholder="e.g. Sri Lanka">
+          <button type="button" class="secondary-btn" id="countryConfirmBtn" style="margin-top:0;width:auto;padding:0 16px;">✅ Confirm</button>
+        </div>
+        <datalist id="countryList"></datalist>
+        <div class="status-line" id="countryStatus">✅ United Kingdom — flag එක සක්‍රීයයි</div>
+        <div class="upload-box" id="flagUploadBox" style="display:none;margin-top:8px;">
+          <input type="file" id="flagImgInput" accept="image/*">
+          <span id="flagUploadLabel">List එකේ නැති රටකට flag image එකක් upload කරන්න</span>
+          <img id="flagThumb" class="upload-thumb">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Logo style (පාට රටේ flag එකට අනුව auto වෙනස් වෙනවා)</label>
+        <div class="fit-toggle" id="logoToggle">
+          <button type="button" class="active" data-logo="1">Pill</button>
+          <button type="button" data-logo="2">Ribbon</button>
+          <button type="button" data-logo="3">Emblem</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Profile Photo (optional — නැත්නම් reference image එකම logo විදිහට පාවිච්චි වේ)</label>
+        <div class="upload-box" id="profileUploadBox">
+          <input type="file" id="profileImgInput" accept="image/*">
+          <span id="profileUploadLabel">Profile photo එකක් upload කරන්න</span>
+          <img id="profileThumb" class="upload-thumb">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>1. Template එක තෝරන්න</label>
+        <div class="templates" id="tplButtons">
+          <button class="tpl-btn active" data-tpl="1"><span class="tpl-swatch sw1"></span>Street / Banner</button>
+          <button class="tpl-btn" data-tpl="2"><span class="tpl-swatch sw2"></span>Premium Brand</button>
+          <button class="tpl-btn" data-tpl="3"><span class="tpl-swatch sw3"></span>Breaking News</button>
+          <button class="tpl-btn" data-tpl="4"><span class="tpl-swatch sw4"></span>Bold Politics</button>
+          <button class="tpl-btn" data-tpl="5"><span class="tpl-swatch sw5"></span>Poll / Reaction</button>
+          <button class="tpl-btn" data-tpl="6"><span class="tpl-swatch sw6"></span>Bold Politics 2</button>
+          <button class="tpl-btn" data-tpl="7"><span class="tpl-swatch sw7"></span>Quote Card</button>
+          <button class="tpl-btn" data-tpl="8"><span class="tpl-swatch sw8"></span>Torn Banner</button>
+          <button class="tpl-btn" data-tpl="9"><span class="tpl-swatch sw9"></span>Dark Card</button>
+          <button class="tpl-btn" data-tpl="10"><span class="tpl-swatch sw10"></span>Overlay Top</button>
+          <button class="tpl-btn" data-tpl="11"><span class="tpl-swatch sw11"></span>Poll Icons</button>
+          <button class="tpl-btn" data-tpl="12"><span class="tpl-swatch sw12"></span>News Serif</button>
+          <button class="tpl-btn" data-tpl="13"><span class="tpl-swatch sw13"></span>Poll Footer</button>
+          <button class="tpl-btn" data-tpl="14"><span class="tpl-swatch sw14"></span>Tag + Line</button>
+          <button class="tpl-btn" data-tpl="15"><span class="tpl-swatch sw15"></span>Flag Edge Caps</button>
+          <button class="tpl-btn" data-tpl="16"><span class="tpl-swatch sw16"></span>Split Quote</button>
+          <button class="tpl-btn" data-tpl="17"><span class="tpl-swatch sw17"></span>Condensed Center</button>
+        </div>
+      </div>
+
+      <div class="field" id="tagField">
+        <label id="tagLabel">Eyebrow / Tag text</label>
+        <input type="text" id="tagInput" placeholder="e.g. BREAKING NEWS">
+      </div>
+
+      <div class="field" id="buttonsField" style="display:none;">
+        <label>Reaction buttons</label>
+        <div class="two-col">
+          <input type="text" id="btn1Input" placeholder="e.g. ❤️ YES">
+          <input type="text" id="btn2Input" placeholder="e.g. 😆 NO">
+        </div>
+      </div>
+
+      <div class="field" id="aiSection">
+        <label>News link + headline + paragraph (analyze කරලා target country එකේ news ද කියලා confirm කරලා, headline/caption generate කරගන්න)</label>
+        <textarea id="newsInput" rows="4" placeholder="Article link එකයි, original headline එකයි, paragraph එකක්වත් paste කරන්න (link එක open කරලා read කරන්න බැහැ නිසා text එකත් එක්ක දෙන්න වඩා හොඳයි)"></textarea>
+        <button type="button" class="secondary-btn" id="genHeadlineBtn">✨ Headline Ideas Generate කරන්න (4 + Question)</button>
+        <div id="newsSummaryBox" style="display:none; margin-top:10px; padding:10px 12px; border-radius:9px; background:var(--bg); border:1.5px solid var(--line); font-size:13px; line-height:1.5;"></div>
+        <div class="suggestions" id="headlineSuggestions"></div>
+        <button type="button" class="secondary-btn" id="genCaptionBtn">✨ Caption + 5 Hashtags Generate කරන්න</button>
+        <textarea id="captionOutput" rows="4" readonly placeholder="Generate කරාම caption + hashtags මෙතන පෙන්නයි... (copy කරගන්න පුළුවන්)" style="margin-top:8px;"></textarea>
+        <button type="button" class="secondary-btn" id="genImagePromptBtn">✨ Reference Image Prompt Generate කරන්න</button>
+        <textarea id="imagePromptOutput" rows="4" readonly placeholder="Generate කරාම, Midjourney/DALL-E/Bing Image Creator වගේ image generator එකකට paste කරන්න පුළුවන් prompt එක මෙතන පෙන්නයි..." style="margin-top:8px;"></textarea>
+        <div class="hint">මේ tool එකට image generate කරන්න පුළුවන් කමක් නෑ (text only) — ඒ නිසා news එකට ගැලපෙන photo prompt එකක් හදලා දෙනවා, ඒක copy කරලා ඔබට කැමති image generator එකකින් (Midjourney/DALL-E/Bing Image Creator) image එක හදාගෙන මෙතනට upload කරන්න පුළුවන්.</div>
+        <button type="button" class="secondary-btn" id="suggestTemplateBtn">✨ Best Template Suggest කරන්න</button>
+        <div id="templateSuggestionBox" style="display:none; margin-top:10px; padding:12px; border:1.5px solid var(--accent-2); border-radius:9px; background:var(--accent-soft);">
+          <div id="templateSuggestionText" style="font-size:13px; margin-bottom:8px;"></div>
+          <button type="button" class="secondary-btn" id="applyTemplateSuggestionBtn" style="margin-top:0;">මේ Template එක Use කරන්න</button>
+        </div>
+        <div class="status-line" id="aiStatus"></div>
+      </div>
+
+      <div class="field">
+        <label>2. Headline එක (manual — ඕන වෙලාවක type/edit කරන්න පුළුවන්)</label>
+        <textarea id="headlineInput" rows="3" placeholder="ඔබේ headline එක මෙතන type කරන්න...">Who Remembers The Morning Postman?</textarea>
+        <div class="two-col" style="margin-top:8px;">
+          <button type="button" class="secondary-btn" id="selectHighlightBtn" style="margin-top:0;">🖉 Select කරපු Text Highlight කරන්න</button>
+          <button type="button" class="secondary-btn" id="suggestHighlightBtn" style="margin-top:0;">✨ AI Highlight Suggest</button>
+        </div>
+        <div class="hint">Headline එකේ ඕන කොටසක් mouse එකෙන් select කරලා "Select කරපු Text Highlight කරන්න" click කරන්න — ඒ වචන දැනට තියෙන Paint color එකෙන් paint වෙනවා. ඕන නම් AI Suggest එකෙන් වචන කීපයක් auto pick කරගන්නත් පුළුවන්.</div>
+      </div>
+
+      <div class="field">
+        <label>Headline font සහ color එක</label>
+        <select id="fontSelect">
+          <option value="merriweather">Merriweather (Classic Serif)</option>
+          <option value="playfair">Playfair Display (Premium Serif)</option>
+          <option value="archivoblack">Archivo Black (Bold Impact)</option>
+          <option value="oswald">Oswald (Tabloid Condensed)</option>
+          <option value="inter">Inter (Clean Sans)</option>
+          <option value="anton">Anton (Tall Condensed Bold)</option>
+          <option value="bebas">Bebas Neue (Slim Condensed)</option>
+        </select>
+        <div class="color-row">
+          <input type="color" id="headlineColorInput" value="#16305c">
+          <span class="hint" style="margin:0;">Headline text එකේ පාට</span>
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>▲ Headline උඩට</span><span id="textOffsetVal">0</span><span>යටට ▼</span></div>
+          <input type="range" id="textOffsetRange" min="-30" max="30" value="0">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>HIGHLIGHT වචන — ඕන තරම් COLOURS</label>
+        <div class="hint" style="margin:0 0 10px;">1️⃣ පළමුව "Paint color" එක තෝරන්න → 2️⃣ ඒ color එකෙන් highlight කරන්න ඕන වචන click කරන්න. Color එක මාරු කරලා ආයෙත් වෙන වචන click කළොත්, headline එකේ colour 2කට වඩා (ඕන තරම්) එකවර පාවිච්චි කරන්න පුළුවන්. Painted වචනයක් ආයෙත් click කළොත් default color එකට return වෙනවා.</div>
+        <div class="color-row" style="justify-content:space-between; margin-top:0;">
+          <span style="font-size:13px; color:var(--ink-soft);">🖌️ Paint color (active)</span>
+          <input type="color" id="paintColorInput" value="#ffcf3f">
+        </div>
+        <div class="preset-row" id="presetRow"></div>
+        <div class="paint-chips" id="paintChips"></div>
+        <button type="button" class="secondary-btn" id="clearPaintBtn">🖌️ Highlights ඔක්කොම clear කරන්න</button>
+      </div>
+
+      <div class="field">
+        <label>3. Reference image එක</label>
+        <div class="upload-box" id="uploadBox">
+          <input type="file" id="imgInput" accept="image/*">
+          <span id="uploadLabel">Image එකක් upload කරන්න (click here)</span>
+          <img id="thumb" class="upload-thumb">
+        </div>
+        <div class="fit-toggle">
+          <button type="button" class="active" data-fit="cover">Fill (crop)</button>
+          <button type="button" data-fit="contain">Fit (no crop)</button>
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Zoom out ◀</span><span id="zoomVal">100%</span><span>▶ Zoom in</span></div>
+          <input type="range" id="zoomRange" min="60" max="250" value="100">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>◀ Left</span><span>Right ▶</span></div>
+          <input type="range" id="panRange" min="-100" max="100" value="0">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Photo කුඩා</span><span id="ratioVal">78%</span><span>Photo ලොකු</span></div>
+          <input type="range" id="photoRatioRange" min="30" max="85" value="78">
+        </div>
+        <div class="hint">Best results: landscape photo, at least 1080px wide.</div>
+      </div>
+
+      <div class="field">
+        <label>4. Output size</label>
+        <div class="fit-toggle" id="ratioToggle">
+          <button type="button" class="active" data-ratio="3:4">3:4 Portrait</button>
+          <button type="button" data-ratio="1:1">1:1 Square</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="confirm-row" for="copyrightCheck" style="display:flex;">
+          <input type="checkbox" id="copyrightCheck">
+          <span>මට මේ reference image එක Facebook එකට post කරන්න අයිතිය/license තියෙනවා කියලා confirm කරනවා.<br><b>සටහන:</b> මේක automatic copyright detection tool එකක් නෙවෙයි (browser එකේ ඉඳන් real copyright check එකක් කරන්න technically පුළුවන් කමක් නෑ) — ඔබම manual එකෙන් confirm කරන reminder එකක් විතරයි. Original/licensed නැති photo Facebook එකට දාන්න කලින් reverse-image-search (Google Images/TinEye) එකෙන් check කරලා බලන්න.</span>
+        </label>
+      </div>
+
+      <div class="field">
+        <label>5. Download</label>
+        <button class="download-btn" id="downloadBtn" disabled>Image එක upload කරන්න මුලින්ම</button>
+        <button type="button" class="secondary-btn" id="resetBtn">🔄 Reset Post (අලුතින් පටන් ගන්න)</button>
+      </div>
+
+      <div class="field">
+        <label>6. Video (Optional)</label>
+
+        <div class="hint" style="margin-top:0;">Video length එක</div>
+        <div class="fit-toggle" id="durationToggle">
+          <button type="button" class="active" data-duration="6">6s</button>
+          <button type="button" data-duration="8">8s</button>
+          <button type="button" data-duration="10">10s</button>
+        </div>
+
+        <div class="hint" style="margin-top:14px;">Voiceover Audio File (ඔබම record කරගත්ත .mp3/.wav/.m4a file එක) — Optional. දාලා video generate කළොත් audio එකත් video එකටම add වෙලා එනවා.</div>
+        <div class="upload-box" id="voiceUploadBox">
+          <input type="file" id="voiceAudioInput" accept="audio/*">
+          <span id="voiceUploadLabel">Voiceover audio file එකක් upload කරන්න</span>
+        </div>
+
+        <button type="button" class="secondary-btn" id="videoBtn" disabled style="margin-top:14px;">🎬 Video Download (animated zoom + effects)</button>
+        <button type="button" class="secondary-btn" id="voicePreviewBtn">🔊 Headline Voice Preview (browser එකෙන් කියවලා අහන්න)</button>
+        <div class="hint">Post එකම animated (zoom + pan + shine sweep + headline entrance) විදිහට video එකක් හදාගන්න පුළුවන් — webm format එකෙන් download වෙනවා (ඕන නම් Facebook/CapCut වගේ app එකකින් mp4 එකට convert කරගන්න පුළුවන්). Voiceover audio file එකක් උඩින් upload කරලා තිබ්බොත් ඒක video එකටම add වෙලා download වෙනවා. Audio එකක් upload කරේ නැත්නම් silent video එකක් හැදෙනවා — ඒ වෙලාවට "🔊 Headline Voice Preview" එකෙන් headline එක browser එකෙන්ම කියවලා අහන්න පුළුවන් (ඒක recording file එකකට බැඳගන්න බැහැ, preview විතරයි).</div>
+        <div class="status-line" id="videoStatus"></div>
+      </div>
+
+    </div>
+
+    <div class="preview-col">
+      <div class="canvas-shell" id="canvasShell">
+        <canvas id="canvas" width="1080" height="1440"></canvas>
+      </div>
+      <div class="meta-row">
+        <span id="dimsText">Preview — 1080 × 1440px (3:4)</span>
+        <span id="statusText">Image එකක් upload කරන්න</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADSTERRA SLOT 2 (BOTTOM BANNER) ================= -->
+  <div class="ad-slot" id="ad-bottom" style="margin-top:24px;"></div>
+
+  <div class="site-footer">
+    Post Template Maker — your photos and headlines are processed only inside your browser and are never uploaded to any server.<br>
+    Make sure you have the right to use any image you post. &nbsp;|&nbsp; <a href="#" style="color:inherit;">Privacy Policy</a> &nbsp;|&nbsp; <a href="#" style="color:inherit;">Contact</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const canvasShell = document.getElementById('canvasShell');
+const dimsText = document.getElementById('dimsText');
+let W = canvas.width, H = canvas.height;
+let currentRatio = '3:4';
+
+let state = {
+  pageName: '', country:{label:'United Kingdom',spec:'uk',colors:['#012169','#C8102E']}, flagImg:null, logoStyle:'1',
+  template: '1',
+  fit: 'cover',
+  img: null,
+  profileImg: null,
+  headline: document.getElementById('headlineInput').value,
+  tag: '',
+  wordColors: {},
+  paintColor: '#ffcf3f',
+  paintAuto: true,
+  highlightColor: '#ffcf3f',
+  headlineColor: '#16305c',
+  font: 'merriweather',
+  btn1: '❤️ YES',
+  btn2: '😆 NO',
+  imgZoom: 1,
+  imgPanX: 0,
+  videoDuration: 6,
+  photoRatio: { '1':78, '2':58, '3':52, '4':62, '5':56, '6':62, '7':100, '8':68, '9':76, '10':100, '11':78, '12':100, '13':100, '14':100, '15':100, '16':100, '17':100 },
+  textOffset: { '1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'11':0,'12':0,'13':0,'14':0,'15':0,'16':0,'17':0 }
+};
+
+const FONTS = {
+  merriweather: { family:"'Merriweather'", fallback:'serif' },
+  playfair:      { family:"'Playfair Display'", fallback:'serif' },
+  archivoblack:  { family:"'Archivo Black'", fallback:'sans-serif' },
+  oswald:        { family:"'Oswald'", fallback:'sans-serif' },
+  inter:         { family:"'Inter'", fallback:'sans-serif' },
+  anton:         { family:"'Anton'", fallback:'Impact, sans-serif' },
+  bebas:         { family:"'Bebas Neue'", fallback:'Impact, sans-serif' }
+};
+function fontStr(key, weight, size){
+  const f = FONTS[key] || FONTS.inter;
+  return `${weight} ${size}px ${f.family}, 'Noto Sans Sinhala', ${f.fallback}`;
+}
+
+const tagField = document.getElementById('tagField');
+const tagLabel = document.getElementById('tagLabel');
+const tagInput = document.getElementById('tagInput');
+const buttonsField = document.getElementById('buttonsField');
+const btn1Input = document.getElementById('btn1Input');
+const btn2Input = document.getElementById('btn2Input');
+const downloadBtn = document.getElementById('downloadBtn');
+const statusText = document.getElementById('statusText');
+const pageNameInput = document.getElementById('pageNameInput');
+const paintChips = document.getElementById('paintChips');
+const paintColorInput = document.getElementById('paintColorInput');
+const clearPaintBtn = document.getElementById('clearPaintBtn');
+const presetRow = document.getElementById('presetRow');
+let lastChipHeadline = null;
+const PAINT_PRESETS = [['#16305c','#e63030'],['#111111','#ffcf3f'],['#16a34a','#e63030'],['#6d28d9','#f59e0b'],['#ffffff','#ffc72c']];
+const PAINT_AI = ['#e63030','#1877f2','#22c55e','#f97316','#a855f7'];
+
+function textOn(hex){
+  const h = String(hex).replace('#','');
+  const r = parseInt(h.substr(0,2),16), g = parseInt(h.substr(2,2),16), b = parseInt(h.substr(4,2),16);
+  return (0.299*r + 0.587*g + 0.114*b) > 160 ? '#111111' : '#ffffff';
+}
+
+function headlineWords(){ return (state.headline || '').split(/\s+/).filter(Boolean); }
+
+function setPaintColor(c, auto){
+  state.paintColor = c;
+  state.paintAuto = !!auto;
+  paintColorInput.value = c;
+}
+
+function renderPaintChips(){
+  lastChipHeadline = state.headline;
+  const words = headlineWords();
+  Object.keys(state.wordColors).forEach(k=>{ if(Number(k) >= words.length) delete state.wordColors[k]; });
+  paintChips.innerHTML = '';
+  words.forEach((w, i)=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'paint-chip';
+    b.textContent = w;
+    const c = state.wordColors[i];
+    if(c){ b.style.background = c; b.style.borderColor = c; b.style.color = textOn(c); }
+    b.addEventListener('click', ()=> toggleWordPaint(i));
+    paintChips.appendChild(b);
+  });
+}
+
+function toggleWordPaint(i){
+  const cur = state.wordColors[i];
+  if(cur && String(cur).toLowerCase() === state.paintColor.toLowerCase()) delete state.wordColors[i];
+  else state.wordColors[i] = state.paintColor;
+  renderPaintChips();
+  draw();
+}
+
+function paintPhrase(phrase, color){
+  const norm = w=>w.replace(/[.,!?;:"'()]/g,'').toLowerCase();
+  const words = headlineWords().map(norm);
+  const ph = String(phrase||'').trim().split(/\s+/).filter(Boolean).map(norm).filter(Boolean);
+  if(!ph.length) return false;
+  let found = false;
+  for(let i=0;i<=words.length-ph.length;i++){
+    let ok = true;
+    for(let j=0;j<ph.length;j++){ if(words[i+j] !== ph[j]){ ok = false; break; } }
+    if(ok){ for(let j=0;j<ph.length;j++) state.wordColors[i+j] = color; found = true; }
+  }
+  return found;
+}
+
+PAINT_PRESETS.forEach(([base, paint])=>{
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'preset-sw';
+  b.style.background = `linear-gradient(90deg, ${base} 50%, ${paint} 50%)`;
+  b.title = 'Headline + paint colors';
+  b.addEventListener('click', ()=>{
+    state.headlineColor = base;
+    headlineColorInput.value = base;
+    headlineColorInput.dataset.touched_ = '1';
+    setPaintColor(paint, false);
+    draw();
+  });
+  presetRow.appendChild(b);
+});
+const headlineColorInput = document.getElementById('headlineColorInput');
+const fontSelect = document.getElementById('fontSelect');
+const zoomRange = document.getElementById('zoomRange');
+const panRange = document.getElementById('panRange');
+const zoomVal = document.getElementById('zoomVal');
+const photoRatioRange = document.getElementById('photoRatioRange');
+const textOffsetRange = document.getElementById('textOffsetRange');
+const textOffsetVal = document.getElementById('textOffsetVal');
+const ratioVal = document.getElementById('ratioVal');
+const copyrightCheck = document.getElementById('copyrightCheck');
+const newsInput = document.getElementById('newsInput');
+const genHeadlineBtn = document.getElementById('genHeadlineBtn');
+const genCaptionBtn = document.getElementById('genCaptionBtn');
+const headlineSuggestions = document.getElementById('headlineSuggestions');
+const newsSummaryBox = document.getElementById('newsSummaryBox');
+const captionOutput = document.getElementById('captionOutput');
+const imagePromptOutput = document.getElementById('imagePromptOutput');
+const genImagePromptBtn = document.getElementById('genImagePromptBtn');
+const aiStatus = document.getElementById('aiStatus');
+const selectHighlightBtn = document.getElementById('selectHighlightBtn');
+const suggestHighlightBtn = document.getElementById('suggestHighlightBtn');
+const headlineInputEl = document.getElementById('headlineInput');
+const videoBtn = document.getElementById('videoBtn');
+const voicePreviewBtn = document.getElementById('voicePreviewBtn');
+const videoStatus = document.getElementById('videoStatus');
+const voiceUploadBox = document.getElementById('voiceUploadBox');
+const voiceAudioInput = document.getElementById('voiceAudioInput');
+const voiceUploadLabel = document.getElementById('voiceUploadLabel');
+let voiceoverFile = null;
+let videoAnimActive = false;
+let videoEntranceT = 1;
+let videoOverallT = 0;
+
+voiceUploadBox.addEventListener('click', ()=> voiceAudioInput.click());
+voiceAudioInput.addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  voiceoverFile = file;
+  voiceUploadLabel.textContent = file.name;
+  videoStatus.textContent = 'Voiceover audio load උනා — video generate කරද්දි auto add වෙනවා.';
+});
+
+function withTextOffset(fn){
+  const dy = H * ((state.textOffset[state.template] || 0) / 100);
+  if(!dy){ fn(); return; }
+  ctx.save();
+  ctx.translate(0, dy);
+  fn();
+  ctx.restore();
+}
+
+function withHeadlineAnim(drawFn){
+  withTextOffset(()=>{
+    if(!videoAnimActive){ drawFn(); return; }
+    const t = Math.min(1, videoEntranceT);
+    const eased = 1 - Math.pow(1-t, 3);
+    ctx.save();
+    ctx.globalAlpha = eased;
+    ctx.translate(0, (1-eased)*34);
+    drawFn();
+    ctx.restore();
+  });
+}
+
+function drawShineSweep(imgH, progress){
+  const bandWidth = W*0.35;
+  const travel = W + bandWidth*2;
+  const x = -bandWidth + progress*travel;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0,0,W,imgH);
+  ctx.clip();
+  const grad = ctx.createLinearGradient(x-bandWidth*0.5, 0, x+bandWidth*0.5, imgH);
+  grad.addColorStop(0, 'rgba(255,255,255,0)');
+  grad.addColorStop(0.5, 'rgba(255,255,255,0.16)');
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,imgH);
+  ctx.restore();
+}
+const suggestTemplateBtn = document.getElementById('suggestTemplateBtn');
+const templateSuggestionBox = document.getElementById('templateSuggestionBox');
+const templateSuggestionText = document.getElementById('templateSuggestionText');
+const applyTemplateSuggestionBtn = document.getElementById('applyTemplateSuggestionBtn');
+
+const tplDefaults = {
+  '1': { tagHide:true, buttonsHide:true, font:'merriweather', headlineColor:'#16305c', highlightColor:'#a3312a' },
+  '2': { tagHide:false, tagLabel:'Small brand label (banner)', tagDefault:'UK Across', buttonsHide:true, font:'playfair', headlineColor:'#16305c', highlightColor:'#a3312a' },
+  '3': { tagHide:false, tagLabel:'Red tag text', tagDefault:'BREAKING NEWS', buttonsHide:true, font:'archivoblack', headlineColor:'#ffffff', highlightColor:'#ffcf3f' },
+  '4': { tagHide:true, buttonsHide:true, font:'archivoblack', headlineColor:'#a3312a', highlightColor:'#16305c' },
+  '5': { tagHide:true, buttonsHide:false, font:'inter', headlineColor:'#16305c', highlightColor:'#a3312a', btn1:'❤️ YES', btn2:'😆 NO' },
+  '6': { tagHide:true, buttonsHide:true, font:'archivoblack', headlineColor:'#16305c', highlightColor:'#a3312a' },
+  '7': { tagHide:true, buttonsHide:true, font:'playfair', headlineColor:'#ffffff', highlightColor:'#ffcf3f' },
+  '8': { tagHide:true, buttonsHide:true, font:'anton', headlineColor:'#16205a', highlightColor:'#b3201f' },
+  '9': { tagHide:true, buttonsHide:true, font:'anton', headlineColor:'#ffffff', highlightColor:'#e63030' },
+  '10': { tagHide:true, buttonsHide:true, font:'anton', headlineColor:'#ffffff', highlightColor:'#f5b800' },
+  '11': { tagHide:true, buttonsHide:false, font:'inter', headlineColor:'#ffffff', highlightColor:'#ffd400', btn1:'NO', btn2:'YES' },
+  '12': { tagHide:false, tagLabel:'Red tag text', tagDefault:'BREAKING NEWS', buttonsHide:true, font:'playfair', headlineColor:'#ffffff', highlightColor:'#ffcf3f' },
+  '13': { tagHide:true, buttonsHide:true, font:'archivoblack', headlineColor:'#ffffff', highlightColor:'#f5b800' },
+  '14': { tagHide:false, tagLabel:'Tag pill text (e.g. topic)', tagDefault:'NEWS UPDATE', buttonsHide:true, font:'archivoblack', headlineColor:'#ffffff', highlightColor:'#f5b800' },
+  '15': { tagHide:true, buttonsHide:true, font:'archivoblack', headlineColor:'#ffffff', highlightColor:'#f5b800' },
+  '16': { tagHide:false, tagLabel:'Quote author (small name under the quote)', tagDefault:'', buttonsHide:true, font:'playfair', headlineColor:'#ffffff', highlightColor:'#ffcf3f' },
+  '17': { tagHide:true, buttonsHide:true, font:'anton', headlineColor:'#ffffff', highlightColor:'#e8211f' }
+};
+
+function applyTplDefaults(t){
+  const d = tplDefaults[t];
+  tagField.style.display = d.tagHide ? 'none' : 'block';
+  if(!d.tagHide){ tagLabel.textContent = d.tagLabel; }
+  buttonsField.style.display = d.buttonsHide ? 'none' : 'block';
+  const td = d.tagDefault==='UK Across' ? (state.country.label+' Across') : (d.tagDefault||'');
+  if(!tagInput.dataset.touched_){ tagInput.value = td; state.tag = td; }
+  if(!fontSelect.dataset.touched_){ fontSelect.value = d.font; state.font = d.font; }
+  if(!headlineColorInput.dataset.touched_){ headlineColorInput.value = d.headlineColor; state.headlineColor = d.headlineColor; }
+  const oldDef = state.highlightColor;
+  state.highlightColor = d.highlightColor;
+  if(state.paintAuto || String(state.paintColor).toLowerCase() === String(oldDef).toLowerCase()){ setPaintColor(d.highlightColor, true); }
+  Object.keys(state.wordColors).forEach(k=>{ if(String(state.wordColors[k]).toLowerCase() === String(oldDef).toLowerCase()) state.wordColors[k] = d.highlightColor; });
+  renderPaintChips();
+  if(!d.buttonsHide){
+    if(!btn1Input.dataset.touched_ && d.btn1){ state.btn1 = d.btn1; btn1Input.value = d.btn1; }
+    if(!btn2Input.dataset.touched_ && d.btn2){ state.btn2 = d.btn2; btn2Input.value = d.btn2; }
+  }
+  const off = state.textOffset[t] || 0;
+  textOffsetRange.value = off;
+  textOffsetVal.textContent = off;
+  const r = state.photoRatio[t];
+  photoRatioRange.value = r;
+  ratioVal.textContent = r + '%';
+}
+applyTplDefaults('1');
+
+document.querySelectorAll('.tpl-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tpl-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.template = btn.dataset.tpl;
+    applyTplDefaults(state.template);
+    draw();
+  });
+});
+
+document.querySelectorAll('#durationToggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#durationToggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.videoDuration = Number(btn.dataset.duration);
+  });
+});
+
+document.querySelectorAll('.fit-toggle#ratioToggle button, #ratioToggle button').forEach(()=>{});
+document.querySelectorAll('#ratioToggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#ratioToggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentRatio = btn.dataset.ratio;
+    setRatio(currentRatio);
+  });
+});
+
+function setRatio(ratio){
+  if(ratio === '1:1'){ W = 1080; H = 1080; canvasShell.style.setProperty('--ar','1'); }
+  else { W = 1080; H = 1440; canvasShell.style.setProperty('--ar','0.75'); }
+  canvas.width = W; canvas.height = H;
+  dimsText.textContent = `Preview — ${W} × ${H}px (${ratio})`;
+  downloadBtn.textContent = `PNG එක Download කරන්න (${W}×${H})`;
+  draw();
+}
+
+document.querySelectorAll('.fit-toggle button[data-fit]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.fit-toggle button[data-fit]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.fit = btn.dataset.fit;
+    draw();
+  });
+});
+
+pageNameInput.addEventListener('input', e=>{ state.pageName = e.target.value; draw(); });
+document.getElementById('headlineInput').addEventListener('input', e=>{ state.headline = e.target.value; draw(); });
+tagInput.addEventListener('input', e=>{ tagInput.dataset.touched_ = '1'; state.tag = e.target.value; draw(); });
+btn1Input.addEventListener('input', e=>{ btn1Input.dataset.touched_ = '1'; state.btn1 = e.target.value; draw(); });
+btn2Input.addEventListener('input', e=>{ btn2Input.dataset.touched_ = '1'; state.btn2 = e.target.value; draw(); });
+paintColorInput.addEventListener('input', e=>{ setPaintColor(e.target.value, false); });
+clearPaintBtn.addEventListener('click', ()=>{ state.wordColors = {}; renderPaintChips(); draw(); });
+headlineColorInput.addEventListener('input', e=>{ headlineColorInput.dataset.touched_='1'; state.headlineColor = e.target.value; draw(); });
+fontSelect.addEventListener('change', e=>{ fontSelect.dataset.touched_='1'; state.font = e.target.value; draw(); });
+zoomRange.addEventListener('input', e=>{ state.imgZoom = Number(e.target.value)/100; zoomVal.textContent = e.target.value+'%'; draw(); });
+panRange.addEventListener('input', e=>{ state.imgPanX = Number(e.target.value); draw(); });
+textOffsetRange.addEventListener('input', e=>{
+  state.textOffset[state.template] = Number(e.target.value);
+  textOffsetVal.textContent = e.target.value;
+  draw();
+});
+photoRatioRange.addEventListener('input', e=>{
+  state.photoRatio[state.template] = Number(e.target.value);
+  ratioVal.textContent = e.target.value + '%';
+  draw();
+});
+copyrightCheck.addEventListener('change', updateDownloadEnabled);
+
+function updateDownloadEnabled(){
+  const enabled = !!(state.img && copyrightCheck.checked);
+  downloadBtn.disabled = !enabled;
+  videoBtn.disabled = !enabled;
+}
+
+function wireUpload(boxId, inputId, thumbId, labelId, onLoaded){
+  const box = document.getElementById(boxId);
+  const input = document.getElementById(inputId);
+  const thumb = document.getElementById(thumbId);
+  const label = document.getElementById(labelId);
+  box.addEventListener('click', ()=> input.click());
+  input.addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      const image = new Image();
+      image.onload = ()=>{
+        thumb.src = ev.target.result;
+        thumb.style.display = 'block';
+        label.textContent = file.name;
+        onLoaded(image);
+      };
+      image.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+wireUpload('uploadBox','imgInput','thumb','uploadLabel', (image)=>{
+  state.img = image;
+  statusText.textContent = 'Ready';
+  updateDownloadEnabled();
+  draw();
+});
+
+wireUpload('profileUploadBox','profileImgInput','profileThumb','profileUploadLabel', (image)=>{
+  state.profileImg = image;
+  draw();
+});
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+var drawPageBadge=function(x, y, name, avatarImg){
+  if(!name || !name.trim()) return;
+  ctx.font = fontStr('inter', 800, 24);
+  const textW = ctx.measureText(name).width;
+  const avatarSize = 34, gap = 10, padX = 14, padY = 8;
+  const boxH = avatarSize + padY*2;
+  const boxW = avatarSize + gap + textW + padX*2;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  roundRect(x, y, boxW, boxH, boxH/2);
+  ctx.fill();
+  const cx = x+padX+avatarSize/2, cy = y+boxH/2;
+  if(avatarImg){
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, avatarSize/2, 0, Math.PI*2);
+    ctx.clip();
+    const ir = avatarImg.width/avatarImg.height;
+    let dw, dh;
+    if(ir > 1){ dh = avatarSize; dw = avatarSize*ir; } else { dw = avatarSize; dh = avatarSize/ir; }
+    ctx.drawImage(avatarImg, cx-dw/2, cy-dh/2, dw, dh);
+    ctx.restore();
+  } else {
+    drawFlag(cx, cy, avatarSize, avatarSize*0.64);
+  }
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'left';
+  ctx.fillText(name, x+padX+avatarSize+gap, cy+8);
+};
+
+function buildHighlightWords(text){
+  const words = String(text||'').split(/\s+/).filter(Boolean);
+  return words.map((w,i)=>({ text:w, hl:!!state.wordColors[i], color:state.wordColors[i] || null }));
+}
+
+function wrapWordObjs(wordObjs, maxWidth, font){
+  ctx.font = font;
+  const spaceWidth = ctx.measureText(' ').width;
+  const lines = [];
+  let cur = [];
+  let curWidth = 0;
+  wordObjs.forEach(wd=>{
+    const wWidth = ctx.measureText(wd.text).width;
+    const testWidth = curWidth + (cur.length ? spaceWidth : 0) + wWidth;
+    if(testWidth > maxWidth && cur.length){ lines.push(cur); cur=[wd]; curWidth=wWidth; }
+    else { cur.push(wd); curWidth = testWidth; }
+  });
+  if(cur.length) lines.push(cur);
+  return lines;
+}
+
+function drawWordLines(lines, font, x, y, lineHeight, align, baseColor, highlightColor){
+  ctx.font = font;
+  const spaceWidth = ctx.measureText(' ').width;
+  lines.forEach((line, li)=>{
+    const lineWidth = line.reduce((acc,w,i)=> acc + ctx.measureText(w.text).width + (i>0?spaceWidth:0), 0);
+    let startX;
+    if(align==='center') startX = x - lineWidth/2;
+    else if(align==='right') startX = x - lineWidth;
+    else startX = x;
+    let cx = startX;
+    ctx.textAlign = 'left';
+    line.forEach(w=>{
+      ctx.fillStyle = w.hl ? (w.color || highlightColor) : baseColor;
+      ctx.fillText(w.text, cx, y + li*lineHeight);
+      cx += ctx.measureText(w.text).width + spaceWidth;
+    });
+  });
+}
+
+function drawCoverImage(img, x, y, w, h, fit, zoom, panX){
+  zoom = zoom || 1; panX = panX || 0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x,y,w,h);
+  ctx.clip();
+  ctx.fillStyle = '#111';
+  ctx.fillRect(x,y,w,h);
+  const ir = img.width / img.height;
+  const r = w / h;
+  let baseW, baseH;
+  if(fit === 'cover'){
+    if(ir > r){ baseH = h; baseW = h*ir; } else { baseW = w; baseH = w/ir; }
+  } else {
+    if(ir > r){ baseW = w; baseH = w/ir; } else { baseH = h; baseW = h*ir; }
+  }
+  const dw = baseW * zoom, dh = baseH * zoom;
+  const extraW = dw - w, extraH = dh - h;
+  const dx = x - extraW/2 - (panX/100) * (extraW/2);
+  const dy = y - extraH/2;
+  ctx.drawImage(img, dx, dy, dw, dh);
+  ctx.restore();
+}
+
+function drawUKFlagRaw(cx, cy, w, h){
+  ctx.save();
+  ctx.translate(cx - w/2, cy - h/2);
+  ctx.fillStyle = '#00247d'; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = h*0.22;
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(w,h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(w,0); ctx.lineTo(0,h); ctx.stroke();
+  ctx.strokeStyle = '#cf142b'; ctx.lineWidth = h*0.09;
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(w,h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(w,0); ctx.lineTo(0,h); ctx.stroke();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = h*0.34;
+  ctx.beginPath(); ctx.moveTo(w/2,0); ctx.lineTo(w/2,h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,h/2); ctx.lineTo(w,h/2); ctx.stroke();
+  ctx.strokeStyle = '#cf142b'; ctx.lineWidth = h*0.14;
+  ctx.beginPath(); ctx.moveTo(w/2,0); ctx.lineTo(w/2,h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,h/2); ctx.lineTo(w,h/2); ctx.stroke();
+  ctx.restore();
+}
+
+function drawStar(cx, cy, r, color){
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  for(let i=0;i<5;i++){
+    const angle = Math.PI/2 + i*(2*Math.PI/5);
+    const angle2 = angle + Math.PI/5;
+    const xOuter = cx+r*Math.cos(angle), yOuter = cy-r*Math.sin(angle);
+    const xInner = cx+(r*0.45)*Math.cos(angle2), yInner = cy-(r*0.45)*Math.sin(angle2);
+    if(i===0) ctx.moveTo(xOuter,yOuter); else ctx.lineTo(xOuter,yOuter);
+    ctx.lineTo(xInner,yInner);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawStarDivider(cy, width){
+  const cx = W/2;
+  ctx.strokeStyle = '#a3312a';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(cx-width/2, cy); ctx.lineTo(cx-20, cy);
+  ctx.moveTo(cx+20, cy); ctx.lineTo(cx+width/2, cy);
+  ctx.stroke();
+  drawStar(cx, cy, 14, '#16305c');
+}
+
+function drawBarDivider(cy, width){
+  const cx = W/2;
+  const segW = 26, gap = 8;
+  const half = width/2;
+  ctx.lineWidth = 7;
+  for(let side=-1; side<=1; side+=2){
+    let pos = 0;
+    let colorToggle = 0;
+    while(pos < half - 20){
+      ctx.strokeStyle = colorToggle % 2 === 0 ? '#a3312a' : '#16305c';
+      const sx = cx + side*(20+pos);
+      const ex = cx + side*Math.min(20+pos+segW, half);
+      ctx.beginPath();
+      ctx.moveTo(sx, cy); ctx.lineTo(ex, cy);
+      ctx.stroke();
+      pos += segW+gap;
+      colorToggle++;
+    }
+  }
+}
+
+function drawPill(cx, cy, text, borderColor){
+  ctx.font = fontStr('inter', 700, 30);
+  const textW = ctx.measureText(text).width;
+  const padX = 30, h = 68;
+  const w = textW + padX*2;
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 4;
+  roundRect(cx-w/2, cy-h/2, w, h, h/2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = borderColor;
+  ctx.textAlign = 'center';
+  ctx.fillText(text, cx, cy+11);
+  return w;
+}
+
+function draw(){
+  if(state.headline !== lastChipHeadline) renderPaintChips();
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0,0,W,H);
+  if(state.template === '1') drawTemplate1();
+  else if(state.template === '2') drawTemplate2();
+  else if(state.template === '3') drawTemplate3();
+  else if(state.template === '4') drawTemplate4('star');
+  else if(state.template === '6') drawTemplate4('bar');
+  else if(state.template === '7') drawTemplate7();
+  else if(state.template === '8') drawTemplate8();
+  else if(state.template === '9') drawTemplate9();
+  else if(state.template === '10') drawTemplate10();
+  else if(state.template === '11') drawTemplate11();
+  else if(state.template === '12') drawTemplate12();
+  else if(state.template === '13') drawTemplate13();
+  else if(state.template === '14') drawTemplate14();
+  else if(state.template === '15') drawTemplate15();
+  else if(state.template === '16') drawTemplate16();
+  else if(state.template === '17') drawTemplate17();
+  else drawTemplate5();
+}
+
+function currentAvatar(){ return state.profileImg || state.img || null; }
+
+function drawImageOrPlaceholder(imgH){
+  if(state.img){
+    drawCoverImage(state.img, 0, 0, W, imgH, state.fit, state.imgZoom, state.imgPanX);
+  } else {
+    ctx.fillStyle = '#3a3a3a';
+    ctx.fillRect(0,0,W,imgH);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = fontStr('inter', 500, 32);
+    ctx.textAlign = 'center';
+    ctx.fillText('Reference image upload කරන්න', W/2, imgH/2);
+  }
+  if(videoAnimActive){
+    drawShineSweep(imgH, videoOverallT);
+  }
+}
+
+function getImgH(){ return Math.round(H * (state.photoRatio[state.template]/100)); }
+
+function drawTemplate1(){
+  const imgH = getImgH();
+  const bannerH = H - imgH;
+  drawImageOrPlaceholder(imgH);
+  const grad = ctx.createLinearGradient(0, imgH-160, 0, imgH);
+  grad.addColorStop(0,'rgba(0,0,0,0)'); grad.addColorStop(1,'rgba(0,0,0,0.35)');
+  ctx.fillStyle = grad; ctx.fillRect(0, imgH-160, W, 160);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+
+  ctx.fillStyle = '#f3ecd9'; ctx.fillRect(0, imgH, W, bannerH);
+  drawFlag(W-95, imgH+70, 130, 82);
+  ctx.fillStyle = '#a3312a'; ctx.fillRect(30, imgH+30, 55, Math.max(60,bannerH-120));
+  ctx.fillStyle = '#7a2320'; ctx.fillRect(20, imgH+30+Math.max(60,bannerH-120), 75, 14);
+
+  const textX = 130;
+  const textMaxW = W - textX - 60;
+  const font1 = fontStr(state.font, 800, 60);
+  const wordObjs = buildHighlightWords(state.headline || ' ', state.highlight);
+  const lines = wrapWordObjs(wordObjs, textMaxW, font1);
+  const lineH = 70;
+  const totalH = lines.length * lineH;
+  const startY = imgH + bannerH/2 - totalH/2 + lineH*0.78;
+  withHeadlineAnim(()=> drawWordLines(lines, font1, textX, startY, lineH, 'left', state.headlineColor, state.highlightColor));
+}
+
+function drawTemplate2(){
+  const imgH = getImgH();
+  drawImageOrPlaceholder(imgH);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+  drawFlag(W-95, 90, 110, 70);
+
+  const lowerY = imgH;
+  const lowerH = H - lowerY;
+  ctx.fillStyle = '#fffdf8';
+  ctx.fillRect(0, lowerY, W, lowerH);
+
+  ctx.strokeStyle = '#c9a24b';
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(70, lowerY+40); ctx.lineTo(W-70, lowerY+40); ctx.stroke();
+
+  ctx.fillStyle = '#8a7130';
+  ctx.font = fontStr('inter', 700, 24);
+  ctx.textAlign = 'center';
+  ctx.fillText((state.tag||'').toUpperCase(), W/2, lowerY+80);
+
+  const textMaxW = W - 130;
+  const font2 = fontStr(state.font, 800, 54);
+  const wordObjs = buildHighlightWords(state.headline || ' ', state.highlight);
+  const lines = wrapWordObjs(wordObjs, textMaxW, font2);
+  const lineH = 66;
+  const blockStart = lowerY + 130;
+  const blockAvail = lowerH - 170;
+  const totalH = lines.length * lineH;
+  const startY = blockStart + Math.max(0,(blockAvail-totalH)/2) + lineH*0.78;
+  withHeadlineAnim(()=> drawWordLines(lines, font2, W/2, startY, lineH, 'center', state.headlineColor, state.highlightColor));
+
+  withTextOffset(()=>{
+    ctx.strokeStyle = '#c9a24b';
+    ctx.lineWidth = 3;
+    const lineY = startY + lines.length*lineH - lineH*0.78 + 46;
+    ctx.beginPath(); ctx.moveTo(70, Math.min(lineY, H-40)); ctx.lineTo(W-70, Math.min(lineY, H-40)); ctx.stroke();
+  });
+}
+
+function drawTemplate3(){
+  const imgH = getImgH();
+  drawImageOrPlaceholder(imgH);
+  const darken = ctx.createLinearGradient(0,0,0,imgH);
+  darken.addColorStop(0,'rgba(0,0,0,0.15)'); darken.addColorStop(1,'rgba(0,0,0,0.05)');
+  ctx.fillStyle = darken; ctx.fillRect(0,0,W,imgH);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+
+  const cardY = imgH - 40;
+  ctx.fillStyle = '#181818';
+  ctx.beginPath();
+  const r = 24;
+  ctx.moveTo(0, cardY+r);
+  ctx.arcTo(0, cardY, r, cardY, r);
+  ctx.lineTo(W-r, cardY);
+  ctx.arcTo(W, cardY, W, cardY+r, r);
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+
+  ctx.font = fontStr('inter', 800, 26);
+  const tagTextW = ctx.measureText((state.tag||'BREAKING NEWS')).width;
+  ctx.fillStyle = '#c0261f';
+  ctx.fillRect(50, cardY+40, tagTextW+50, 50);
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'left';
+  ctx.fillText(state.tag || 'BREAKING NEWS', 75, cardY+74);
+
+  const textMaxW = W - 100;
+  const font3 = fontStr(state.font, 800, 50);
+  const wordObjs = buildHighlightWords(state.headline || ' ', state.highlight)
+    .map(w=>({text:w.text.toUpperCase(), hl:w.hl, color:w.color}));
+  const lines = wrapWordObjs(wordObjs, textMaxW, font3);
+  withHeadlineAnim(()=> drawWordLines(lines, font3, 50, cardY+150, 60, 'left', state.headlineColor, state.highlightColor));
+}
+
+function drawTemplate4(dividerType){
+  const imgH = getImgH();
+  drawImageOrPlaceholder(imgH);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+
+  const lowerY = imgH;
+  const lowerH = H - lowerY;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, lowerY, W, lowerH);
+
+  const textMaxW = W - 90;
+  const font4 = fontStr(state.font, 800, 50);
+  const wordObjs = buildHighlightWords((state.headline||' ').toUpperCase(), (state.highlight||'').toUpperCase());
+  const lines = wrapWordObjs(wordObjs, textMaxW, font4);
+  const lineH = 60;
+  const totalH = lines.length*lineH;
+  const startY = lowerY + Math.max(30,(lowerH-70-totalH)/2) + lineH*0.78;
+  withHeadlineAnim(()=> drawWordLines(lines, font4, W/2, startY, lineH, 'center', state.headlineColor, state.highlightColor));
+
+  const dividerY = startY + lines.length*lineH - lineH*0.78 + 44;
+  withTextOffset(()=>{
+    if(dividerType === 'bar') drawBarDivider(dividerY, W*0.7);
+    else drawStarDivider(dividerY, W*0.6);
+  });
+}
+
+function drawTemplate5(){
+  const imgH = getImgH();
+  drawImageOrPlaceholder(imgH);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+  drawFlag(W-95, 90, 110, 70);
+
+  const lowerY = imgH;
+  const lowerH = H - lowerY;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, lowerY, W, lowerH);
+
+  const textMaxW = W - 100;
+  const font5 = fontStr(state.font, 800, 52);
+  const wordObjs = buildHighlightWords(state.headline || ' ', state.highlight);
+  const lines = wrapWordObjs(wordObjs, textMaxW, font5);
+  const lineH = 62;
+  const buttonRowH = 110;
+  const textBlockH = lowerH - buttonRowH;
+  const totalH = lines.length*lineH;
+  const startY = lowerY + Math.max(20,(textBlockH-totalH)/2) + lineH*0.78;
+  withHeadlineAnim(()=> drawWordLines(lines, font5, W/2, startY, lineH, 'center', state.headlineColor, state.highlightColor));
+
+  const btnY = lowerY + textBlockH + buttonRowH/2 - 10;
+  ctx.font = fontStr('inter', 700, 30);
+  const w1 = ctx.measureText(state.btn1||'').width + 60;
+  const w2 = ctx.measureText(state.btn2||'').width + 60;
+  const gap = 26;
+  const totalW = w1 + gap + w2;
+  const startX = W/2 - totalW/2;
+  drawPill(startX + w1/2, btnY, state.btn1 || '', '#a3312a');
+  drawPill(startX + w1 + gap + w2/2, btnY, state.btn2 || '', '#16305c');
+}
+
+function drawTemplate7(){
+  drawImageOrPlaceholder(H);
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, 'rgba(0,0,0,0.35)');
+  grad.addColorStop(0.45, 'rgba(0,0,0,0.15)');
+  grad.addColorStop(0.62, 'rgba(0,0,0,0.55)');
+  grad.addColorStop(1, 'rgba(0,0,0,0.88)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+  drawFlag(W-95, 90, 110, 70);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = "900 130px Georgia, 'Playfair Display', serif";
+  ctx.textAlign = 'left';
+  ctx.fillText('\u201C', 44, H*0.62);
+
+  const textMaxW = W - 130;
+  const font7 = fontStr(state.font, 800, 52);
+  const wordObjs = buildHighlightWords(state.headline || ' ', state.highlight);
+  const lines = wrapWordObjs(wordObjs, textMaxW, font7);
+  const lineH = 64;
+  const totalH = lines.length*lineH;
+  const startY = H*0.66 - totalH/2 + lineH*0.78;
+  withHeadlineAnim(()=> drawWordLines(lines, font7, 65, startY, lineH, 'left', state.headlineColor, state.highlightColor));
+
+  const lineY = startY + lines.length*lineH - lineH*0.78 + 44;
+  withTextOffset(()=>{
+    ctx.strokeStyle = '#c9a24b';
+    ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(65, Math.min(lineY, H-40)); ctx.lineTo(65+140, Math.min(lineY, H-40)); ctx.stroke();
+  });
+}
+
+
+function fitText(wordObjs, maxW, availH, fontKey, startSize, minSize, lineRatio){
+  let size = startSize, lines;
+  while(true){
+    lines = wrapWordObjs(wordObjs, maxW, fontStr(fontKey, 800, size));
+    if(lines.length*size*lineRatio <= availH || size <= minSize) break;
+    size -= 2;
+  }
+  return { lines, size, lineH: size*lineRatio, font: fontStr(fontKey, 800, size) };
+}
+
+function upperWords(){
+  return buildHighlightWords(state.headline || ' ', state.highlight).map(w=>({text:w.text.toUpperCase(), hl:w.hl, color:w.color}));
+}
+
+function drawStripeBand(y, h){
+  ctx.fillStyle = '#c8102e';
+  ctx.fillRect(0, y, W, h);
+  ctx.fillStyle = '#1d2a6b';
+  for(let x=-h; x<W+h; x+=h*2){
+    ctx.beginPath();
+    ctx.moveTo(x, y+h); ctx.lineTo(x+h*0.9, y); ctx.lineTo(x+h*1.4, y); ctx.lineTo(x+h*0.5, y+h);
+    ctx.closePath(); ctx.fill();
+  }
+}
+
+function drawLogoCircle(cx, cy, r, img){
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(cx, cy, r+5, 0, Math.PI*2); ctx.fill();
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.clip();
+  if(img){
+    const ir = img.width/img.height;
+    let dw, dh;
+    if(ir > 1){ dh = r*2; dw = dh*ir; } else { dw = r*2; dh = dw/ir; }
+    ctx.drawImage(img, cx-dw/2, cy-dh/2, dw, dh);
+  } else {
+    drawFlag(cx, cy, r*2.4, r*1.6);
+  }
+  ctx.restore();
+}
+
+const THUMB_PATH = new Path2D('M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z');
+const HEART_PATH = new Path2D('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+
+function drawIconPath(path, cx, cy, size, color){
+  ctx.save();
+  ctx.translate(cx - size/2, cy - size/2);
+  ctx.scale(size/24, size/24);
+  ctx.fillStyle = color;
+  ctx.fill(path);
+  ctx.restore();
+}
+
+function cleanLabel(t){
+  const c = String(t||'').replace(/[^\p{L}\p{N}\s?!.'\u2019-]/gu, '').trim();
+  return c || String(t||'');
+}
+
+// Template 8: Torn Banner (striped red/blue edges)
+function drawTemplate8(){
+  const imgH = getImgH();
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+  drawImageOrPlaceholder(imgH);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+  const bandH = 16;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, imgH, W, H-imgH);
+  drawStripeBand(imgH, bandH);
+  drawStripeBand(H-bandH, bandH);
+  const areaH = (H-imgH) - bandH*2;
+  const fit = fitText(upperWords(), W-110, areaH-40, state.font, 96, 44, 1.08);
+  const totalH = fit.lines.length * fit.lineH;
+  const startY = imgH + bandH + (areaH - totalH)/2 + fit.lineH*0.82;
+  withHeadlineAnim(()=> drawWordLines(fit.lines, fit.font, W/2, startY, fit.lineH, 'center', state.headlineColor, state.highlightColor));
+}
+
+// Template 9: Dark rounded card overlapping the photo
+function drawTemplate9(){
+  const imgH = getImgH();
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+  drawImageOrPlaceholder(imgH);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+  const cardTop = imgH - Math.round(H*0.08);
+  const cardX = 30, cardW = W-60, cardH = H - 30 - cardTop;
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.35)';
+  ctx.shadowBlur = 24; ctx.shadowOffsetY = 6;
+  ctx.fillStyle = '#0b0b0b';
+  roundRect(cardX, cardTop, cardW, cardH, 40);
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 5;
+  roundRect(cardX, cardTop, cardW, cardH, 40);
+  ctx.stroke();
+  const fit = fitText(upperWords(), cardW-90, cardH-70, state.font, 92, 44, 1.1);
+  const totalH = fit.lines.length * fit.lineH;
+  const startY = cardTop + (cardH - totalH)/2 + fit.lineH*0.82;
+  withHeadlineAnim(()=> drawWordLines(fit.lines, fit.font, W/2, startY, fit.lineH, 'center', state.headlineColor, state.highlightColor));
+}
+
+// Template 10: Full-bleed photo, headline across the top, logo bottom-left
+function drawTemplate10(){
+  drawImageOrPlaceholder(H);
+  const g = ctx.createLinearGradient(0, 0, 0, H*0.55);
+  g.addColorStop(0, 'rgba(0,0,0,0.72)');
+  g.addColorStop(0.6, 'rgba(0,0,0,0.25)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H*0.55);
+  const fit = fitText(upperWords(), W-110, H*0.36, state.font, 96, 48, 1.08);
+  const startY = H*0.07 + fit.lineH*0.85;
+  withHeadlineAnim(()=>{
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.75)';
+    ctx.shadowBlur = 14; ctx.shadowOffsetY = 4;
+    drawWordLines(fit.lines, fit.font, W/2, startY, fit.lineH, 'center', state.headlineColor, state.highlightColor);
+    ctx.restore();
+  });
+  const r = 62, cx = 40 + r + 5, cy = H - 40 - r - 5;
+  drawLogoCircle(cx, cy, r, currentAvatar());
+  if(state.pageName && state.pageName.trim()){
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 10;
+    ctx.fillStyle = '#ffffff';
+    ctx.font = fontStr('inter', 800, 34);
+    ctx.textAlign = 'left';
+    ctx.fillText(state.pageName, cx + r + 22, cy + 12);
+    ctx.restore();
+  }
+}
+
+// Template 11: Poll with thumbs-up / heart circle buttons
+function drawTemplate11(){
+  const imgH = getImgH();
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, W, H);
+  drawImageOrPlaceholder(imgH);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+  const g = ctx.createLinearGradient(0, imgH - H*0.42, 0, imgH);
+  g.addColorStop(0, 'rgba(0,0,0,0)');
+  g.addColorStop(1, 'rgba(0,0,0,0.92)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, imgH - H*0.42, W, H*0.42);
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, imgH, W, H-imgH);
+
+  const words = buildHighlightWords(state.headline || ' ', state.highlight);
+  const fit = fitText(words, W-120, H*0.30, state.font, 84, 44, 1.14);
+  const startY = imgH - 36 - fit.lines.length*fit.lineH + fit.lineH*0.8;
+  withHeadlineAnim(()=> drawWordLines(fit.lines, fit.font, W/2, startY, fit.lineH, 'center', state.headlineColor, state.highlightColor));
+
+  const bandH = H - imgH;
+  const cy = imgH + bandH*0.40;
+  const r = Math.max(30, Math.min(58, bandH*0.22));
+  const lx = W*0.27, rx = W*0.73;
+  ctx.fillStyle = '#1877f2';
+  ctx.beginPath(); ctx.arc(lx, cy, r, 0, Math.PI*2); ctx.fill();
+  drawIconPath(THUMB_PATH, lx, cy, r*1.15, '#ffffff');
+  ctx.fillStyle = '#e53935';
+  ctx.beginPath(); ctx.arc(rx, cy, r, 0, Math.PI*2); ctx.fill();
+  drawIconPath(HEART_PATH, rx, cy, r*1.15, '#ffffff');
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(W/2, imgH + bandH*0.12); ctx.lineTo(W/2, imgH + bandH*0.88); ctx.stroke();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = fontStr('inter', 800, Math.round(r*0.85));
+  ctx.textAlign = 'center';
+  const ly = cy + r + Math.round(r*0.95);
+  ctx.fillText(cleanLabel(state.btn1), lx, ly);
+  ctx.fillText(cleanLabel(state.btn2), rx, ly);
+}
+
+
+function bottomShade(from){
+  const g = ctx.createLinearGradient(0, H*from, 0, H);
+  g.addColorStop(0, 'rgba(0,0,0,0)');
+  g.addColorStop(0.55, 'rgba(0,0,0,0.55)');
+  g.addColorStop(1, 'rgba(0,0,0,0.9)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, H*from, W, H - H*from);
+}
+
+// Template 12: News Serif (red tag + big white serif headline)
+function drawTemplate12(){
+  drawImageOrPlaceholder(H);
+  bottomShade(0.40);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+  const padX = 52, tagH = 58;
+  const fit = fitText(buildHighlightWords(state.headline || ' '), W-padX*2, H*0.27, state.font, 84, 40, 1.2);
+  const totalH = fit.lines.length * fit.lineH;
+  const startY = H - 64 - totalH + fit.lineH*0.82;
+  const tagY = startY - fit.lineH*0.82 - 30 - tagH;
+  const tagText = (state.tag || 'BREAKING NEWS').toUpperCase();
+  withHeadlineAnim(()=>{
+    ctx.font = fontStr('inter', 800, 30);
+    const tw = ctx.measureText(tagText).width;
+    ctx.fillStyle = '#d3201a';
+    ctx.fillRect(padX, tagY, tw + 44, tagH);
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'left';
+    ctx.fillText(tagText, padX + 22, tagY + tagH/2 + 11);
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10;
+    drawWordLines(fit.lines, fit.font, padX, startY, fit.lineH, 'left', state.headlineColor, state.highlightColor);
+    ctx.restore();
+  });
+}
+
+// Template 13: Poll Footer (caps headline + page name between two lines)
+function drawTemplate13(){
+  drawImageOrPlaceholder(H);
+  bottomShade(0.45);
+  const padX = 48;
+  const hasName = !!(state.pageName && state.pageName.trim());
+  const bottomPad = hasName ? 110 : 64;
+  const fit = fitText(upperWords(), W-padX*2, H*0.3, state.font, 78, 40, 1.12);
+  const totalH = fit.lines.length * fit.lineH;
+  const startY = H - bottomPad - totalH + fit.lineH*0.82;
+  withHeadlineAnim(()=>{
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10;
+    drawWordLines(fit.lines, fit.font, padX, startY, fit.lineH, 'left', state.headlineColor, state.highlightColor);
+    ctx.restore();
+  });
+  if(hasName){
+    const label = state.pageName.trim().toUpperCase();
+    ctx.save();
+    ctx.font = fontStr('inter', 700, 26);
+    if('letterSpacing' in ctx) ctx.letterSpacing = '2px';
+    const tw = ctx.measureText(label).width;
+    const cy = H - 46;
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, W/2, cy + 9);
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padX, cy); ctx.lineTo(W/2 - tw/2 - 24, cy);
+    ctx.moveTo(W/2 + tw/2 + 24, cy); ctx.lineTo(W - padX, cy);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+// Template 14: Tag pill + caps headline + flag-colour line
+function drawTemplate14(){
+  drawImageOrPlaceholder(H);
+  bottomShade(0.40);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+  const padX = 48, pillH = 60, lineY = H - 36;
+  const p = pal();
+  const fit = fitText(upperWords(), W-padX*2, H*0.26, state.font, 92, 44, 1.1);
+  const totalH = fit.lines.length * fit.lineH;
+  const startY = lineY - 52 - totalH + fit.lineH*0.82;
+  const pillY = startY - fit.lineH*0.82 - 28 - pillH;
+  const tagText = (state.tag || 'NEWS UPDATE').toUpperCase();
+  withHeadlineAnim(()=>{
+    ctx.font = fontStr('inter', 800, 28);
+    const tw = ctx.measureText(tagText).width;
+    const iconW = 46;
+    const pw = iconW + tw + 52;
+    ctx.fillStyle = p[0];
+    roundRect(padX, pillY, pw, pillH, 12); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 2;
+    roundRect(padX, pillY, pw, pillH, 12); ctx.stroke();
+    const ix = padX + 22, iy = pillY + pillH/2 - 13;
+    ctx.fillStyle = '#ffffff';
+    roundRect(ix, iy + 3, 22, 22, 4); ctx.fill();
+    ctx.fillRect(ix + 4, iy, 4, 7); ctx.fillRect(ix + 14, iy, 4, 7);
+    ctx.fillStyle = p[0]; ctx.fillRect(ix + 3, iy + 12, 16, 2);
+    ctx.fillStyle = textOn(p[0]);
+    ctx.textAlign = 'left';
+    ctx.fillText(tagText, padX + iconW + 24, pillY + pillH/2 + 10);
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10;
+    drawWordLines(fit.lines, fit.font, padX, startY, fit.lineH, 'left', state.headlineColor, state.highlightColor);
+    ctx.restore();
+  });
+  const cols = ['#f5b800', p[0], '#ffffff', p[1], '#f5b800'];
+  const segW = (W - padX*2) / cols.length;
+  ctx.lineWidth = 6;
+  cols.forEach((c, i)=>{
+    ctx.strokeStyle = c;
+    ctx.beginPath();
+    ctx.moveTo(padX + i*segW, lineY); ctx.lineTo(padX + (i+1)*segW, lineY);
+    ctx.stroke();
+  });
+}
+
+
+// Template 15: Flag-edge caps headline
+function drawTemplate15(){
+  drawImageOrPlaceholder(H);
+  bottomShade(0.42);
+  drawPageBadge(28, 28, state.pageName, currentAvatar());
+  drawLogoCircle(W-88, 88, 46, state.profileImg || null);
+  const p = pal(), bw = 12, seg = H/3;
+  const left = [p[1], '#ffffff', p[0]], right = [p[0], '#ffffff', p[1]];
+  for(let i=0;i<3;i++){
+    ctx.fillStyle = left[i];  ctx.fillRect(0, i*seg, bw, seg+1);
+    ctx.fillStyle = right[i]; ctx.fillRect(W-bw, i*seg, bw, seg+1);
+  }
+  const padX = 52;
+  const fit = fitText(upperWords(), W-padX*2, H*0.3, state.font, 84, 40, 1.1);
+  const totalH = fit.lines.length * fit.lineH;
+  const startY = H - 70 - totalH + fit.lineH*0.82;
+  withHeadlineAnim(()=>{
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10;
+    drawWordLines(fit.lines, fit.font, padX, startY, fit.lineH, 'left', state.headlineColor, state.highlightColor);
+    ctx.restore();
+  });
+}
+
+// Template 16: Split quote card (photo left, black right, big quote mark)
+function drawTemplate16(){
+  drawImageOrPlaceholder(H);
+  const g = ctx.createLinearGradient(0, 0, W, 0);
+  g.addColorStop(0, 'rgba(0,0,0,0)');
+  g.addColorStop(0.40, 'rgba(0,0,0,0.05)');
+  g.addColorStop(0.60, 'rgba(0,0,0,0.96)');
+  g.addColorStop(1, '#000000');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  const textX = Math.round(W*0.57), maxW = Math.round(W*0.39);
+  if(state.pageName && state.pageName.trim()){
+    ctx.save();
+    ctx.font = fontStr('inter', 800, 30);
+    ctx.fillStyle = '#ffffff'; ctx.textAlign = 'right';
+    ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 8;
+    ctx.fillText(state.pageName.trim(), W-34, 58);
+    ctx.restore();
+  }
+  const fit = fitText(buildHighlightWords(state.headline || ' '), maxW, H*0.5, state.font, 84, 40, 1.25);
+  const totalH = fit.lines.length * fit.lineH;
+  const startY = H*0.31 + fit.lineH*0.82;
+  const author = (state.tag || '').trim();
+  withHeadlineAnim(()=>{
+    ctx.fillStyle = state.highlightColor;
+    ctx.font = "900 260px Georgia, 'Playfair Display', serif";
+    ctx.textAlign = 'left';
+    ctx.fillText('“', textX - 6, H*0.235);
+    drawWordLines(fit.lines, fit.font, textX, startY, fit.lineH, 'left', state.headlineColor, state.highlightColor);
+    if(author){
+      ctx.font = fontStr('inter', 800, 30);
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'left';
+      ctx.fillText(author, textX, startY + (fit.lines.length-1)*fit.lineH + 62);
+    }
+  });
+  // "Link in comments" footer
+  ctx.save();
+  ctx.font = fontStr('inter', 700, 24);
+  ctx.textAlign = 'right';
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  const lt = 'Link in comments';
+  ctx.fillText(lt, W-34, H-34);
+  const lw = ctx.measureText(lt).width;
+  ctx.translate(W-34-lw-38, H-42);
+  ctx.rotate(-Math.PI/4);
+  ctx.strokeStyle = 'rgba(255,255,255,0.92)'; ctx.lineWidth = 3;
+  roundRect(-14, -7, 18, 14, 7); ctx.stroke();
+  roundRect(-4, -7, 18, 14, 7); ctx.stroke();
+  ctx.restore();
+}
+
+// Template 17: Condensed centred caps headline, page pill top-right
+function drawTemplate17(){
+  drawImageOrPlaceholder(H);
+  bottomShade(0.38);
+  if(state.pageName && state.pageName.trim()){
+    const name = state.pageName.trim();
+    ctx.font = fontStr('inter', 600, 44);
+    const tw = ctx.measureText(name).width;
+    const r = 46, boxH = 100, padL = 28, gap = 18, padR = 6;
+    const boxW = padL + tw + gap + r*2 + padR;
+    const x = W - 40 - boxW, y = 48;
+    ctx.fillStyle = 'rgba(45,45,45,0.88)';
+    roundRect(x, y, boxW, boxH, 30); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.textAlign = 'left';
+    ctx.fillText(name, x + padL, y + boxH/2 + 15);
+    const cx = x + boxW - padR - r, cy = y + boxH/2;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(cx, cy, r+4, 0, Math.PI*2); ctx.fill();
+    avatarAt(cx, cy, r*2, currentAvatar());
+  }
+  const p = pal();
+  const lineY = H - 108;
+  const fit = fitText(upperWords(), W-180, H*0.27, state.font, 112, 50, 1.06);
+  const totalH = fit.lines.length * fit.lineH;
+  const startY = lineY - 62 - totalH + fit.lineH*0.82;
+  withHeadlineAnim(()=>{
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 12;
+    drawWordLines(fit.lines, fit.font, W/2, startY, fit.lineH, 'center', state.headlineColor, state.highlightColor);
+    ctx.restore();
+  });
+  ctx.strokeStyle = p[1]; ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.moveTo(W/2 - W*0.12, lineY); ctx.lineTo(W/2 + W*0.12, lineY); ctx.stroke();
+}
+
+let downloadsCap = null, sampleCap = null;
+(async ()=>{
+  if(window.claude && typeof window.claude.use === 'function'){
+    try{ downloadsCap = await window.claude.use('downloads'); }catch(e){ downloadsCap = null; }
+    try{ sampleCap = await window.claude.use('sample'); }catch(e){ sampleCap = null; }
+  }
+  if(!sampleCap){
+    const aiSec = document.getElementById('aiSection'); if(aiSec) aiSec.style.display = 'none';
+    suggestHighlightBtn.style.display = 'none';
+    genHeadlineBtn.title = 'AI feature not available in this view';
+    genCaptionBtn.title = 'AI feature not available in this view';
+  }
+})();
+
+function aiErrorMessage(code){
+  switch(code){
+    case 'not_granted': return 'AI feature එකට permission දෙන්න ඕන (popup එකේ Allow කරන්න).';
+    case 'rate_limited': return 'ටිකක් වේගවත් වැඩියි — ටිකක් ඉඳලා try කරන්න.';
+    case 'refused': return 'මේ content එකට AI ප්‍රතිචාර දුන්නේ නෑ — වෙනස් text එකකින් try කරන්න.';
+    case 'sampling_disabled': case 'not_declared': case 'capability_disabled': case 'capability_removed':
+      return 'මේ tool එකේ AI feature එක දැනට available නෑ.';
+    case 'prompt_too_large': return 'Text එක වැඩියි — කෙටි කරලා try කරන්න.';
+    default: return 'AI request එක fail උනා — නැවත try කරන්න.';
+  }
+}
+
+selectHighlightBtn.addEventListener('click', ()=>{
+  const start = headlineInputEl.selectionStart, end = headlineInputEl.selectionEnd;
+  if(start === end){
+    aiStatus.textContent = 'headline එකේ highlight කරන්න ඕන කොටස mouse එකෙන් select කරලා (drag) නැවත click කරන්න.';
+    return;
+  }
+  const val = headlineInputEl.value;
+  const re = /\S+/g;
+  let m, idx = 0, count = 0;
+  while((m = re.exec(val)) !== null){
+    if(m.index + m[0].length > start && m.index < end){ state.wordColors[idx] = state.paintColor; count++; }
+    idx++;
+  }
+  if(count){
+    renderPaintChips();
+    draw();
+    aiStatus.textContent = 'වචන ' + count + 'ක් paint කළා — ඕන නම් chips click කරලා වෙනස් කරගන්න පුළුවන්.';
+  }
+});
+
+suggestHighlightBtn.addEventListener('click', async ()=>{
+  const headline = state.headline.trim();
+  if(!headline){ aiStatus.textContent = 'මුලින්ම headline එකක් ලියන්න.'; return; }
+  if(!sampleCap){ aiStatus.textContent = 'මේ view එකේ AI feature එක available නෑ.'; return; }
+  suggestHighlightBtn.disabled = true;
+  aiStatus.textContent = 'Best highlight word එක හොයනවා...';
+  try{
+    const prompt = `Given this Facebook news headline: "${headline}"\nPick the 2 or 3 most attention-grabbing words or short phrases (1-4 words each, each must appear verbatim and exactly as written inside the headline above, no overlap between them) to highlight in different colors for maximum engagement/click-through.\n\nReply with only a JSON object: {"highlights": ["...", "..."]}`;
+    const result = await sampleCap.json(prompt, { modelTier:'quick', cache:false });
+    let list = Array.isArray(result && result.highlights) ? result.highlights : (result && result.highlight ? [result.highlight] : []);
+    list = list.map(x=>String(x||'').trim()).filter(Boolean).slice(0,3);
+    if(list.length){
+      state.wordColors = {};
+      list.forEach((t,i)=>{ paintPhrase(t, i===0 ? state.highlightColor : PAINT_AI[(i-1) % PAINT_AI.length]); });
+      renderPaintChips();
+      draw();
+      aiStatus.textContent = 'Highlights ' + list.length + ' ක් suggest කළා — ඕන නම් වෙනස් කරගන්න පුළුවන්.';
+    } else {
+      aiStatus.textContent = 'Suggestion එකක් ලැබුනේ නෑ — try again.';
+    }
+  } catch(err){
+    aiStatus.textContent = aiErrorMessage(err && err.code);
+  } finally {
+    suggestHighlightBtn.disabled = false;
+  }
+});
+
+genHeadlineBtn.addEventListener('click', async ()=>{
+  const src = newsInput.value.trim();
+  if(!src){ aiStatus.textContent = 'මුලින්ම article link/facts ටිකක් type කරන්න.'; return; }
+  if(!sampleCap){ aiStatus.textContent = 'මේ view එකේ AI feature එක available නෑ.'; return; }
+  genHeadlineBtn.disabled = true;
+  aiStatus.textContent = 'Headline ideas හදනවා...';
+  headlineSuggestions.innerHTML = '';
+  newsSummaryBox.style.display = 'none';
+  try{
+    const prompt = `You write short, factual, high-engagement headlines for a ${CN()} news Facebook page called "${state.pageName}".\n\nRead the source notes below.\n\nFirst decide: is this clearly ${CN()}-related news (${CN()} politics, ${CN()} public figures, ${CN()} places/institutions, or an event in/about ${CN()})? If you are unsure, or it could plausibly be ${CN()}-related, treat it as ${CN()}-related — only mark it as NOT ${CN()}-related if it is clearly and only about another country with no ${CN()} connection at all.\n\nAlso write a short summary of what this news story is about, in SINHALA language (2-3 sentences, simple plain Sinhala, no English words unless a name has no Sinhala equivalent).\n\nIf it is ${CN()}-related, write exactly 4 headline options for a Facebook post, ordered from most to least engaging, AND ALSO one extra headline written as a QUESTION that asks readers for their opinion (poll style, must end with a question mark, under 18 words, e.g. 'Should ...?' or 'Do you support ...?'). Each headline must be 100% accurate to the source notes — never invent names, numbers, quotes, or claims not present in the source notes. Style: punchy, tabloid, one sentence or question, under 18 words, provocative but not hateful or defamatory, no hashtags, no emojis, no quote marks around it. The headline text itself stays in ENGLISH (for the Facebook post). For EACH headline also write a one-sentence explanation in SINHALA of why this headline works / what it means (simple plain Sinhala).\n\nIf it is not ${CN()}-related, return an empty headlines array and an empty question_headline object (still write the Sinhala summary).\n\nSource notes:\n"""\n${src}\n"""\n\nRespond with ONLY this JSON object and nothing else — no explanation outside the JSON, no markdown code fence:\n{"is_uk_news": true, "summary_si": "සිංහලෙන් කෙටි විස්තරය මෙතන", "headlines": [{"headline": "headline text in English", "explanation_si": "සිංහලෙන් කෙටි පැහැදිලි කිරීම"}, {"headline": "...", "explanation_si": "..."}, {"headline": "...", "explanation_si": "..."}, {"headline": "...", "explanation_si": "..."}], "question_headline": {"headline": "question headline in English ending with ?", "explanation_si": "සිංහලෙන් කෙටි පැහැදිලි කිරීම"}}`;
+    const result = await sampleCap.json(prompt, { modelTier: 'default', cache:false });
+    const rawHeadlines = Array.isArray(result && result.headlines) ? result.headlines : [];
+    const headlines = rawHeadlines
+      .map(h=>{
+        if(h && typeof h === 'object'){
+          return { headline: String(h.headline||'').trim(), explanation_si: String(h.explanation_si||'').trim() };
+        }
+        return { headline: String(h||'').trim(), explanation_si: '' };
+      })
+      .filter(h=>h.headline);
+    const qh = result && result.question_headline;
+    if(qh && typeof qh === 'object' && String(qh.headline||'').trim()){
+      headlines.push({ headline: String(qh.headline).trim(), explanation_si: String(qh.explanation_si||'').trim(), isQ:true });
+    }
+    const explicitlyNotUk = !!(result && result.is_uk_news === false);
+    const summarySi = (result && String(result.summary_si||'').trim()) || '';
+
+    if(summarySi){
+      newsSummaryBox.innerHTML = '<b>📰 මේ news එක ගැන:</b><br>' + summarySi;
+      newsSummaryBox.style.display = 'block';
+    }
+
+    if(headlines.length){
+      aiStatus.textContent = '✅ hodama headline එක උඩින්ම. ඕන එකක් click කරලා headline field එකට දාගන්න.';
+      headlines.forEach(h=>{
+        const wrap = document.createElement('div');
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'suggestion-chip';
+        chip.textContent = (h.isQ ? '❓ ' : '') + h.headline;
+        chip.addEventListener('click', ()=>{
+          document.getElementById('headlineInput').value = h.headline;
+          state.headline = h.headline;
+          draw();
+        });
+        wrap.appendChild(chip);
+        if(h.explanation_si){
+          const exp = document.createElement('div');
+          exp.style.cssText = 'font-size:12px; color:var(--ink-soft); padding:2px 4px 4px; line-height:1.4;';
+          exp.textContent = '→ ' + h.explanation_si;
+          wrap.appendChild(exp);
+        }
+        headlineSuggestions.appendChild(wrap);
+      });
+    }
+    else if(explicitlyNotUk){
+      aiStatus.textContent = '❌ මේ news එක ' + CN() + ' ගැන නෙවෙයි (වෙන රටක news එකක්). ' + CN() + ' news එකක් දෙන්න.';
+    }
+    else{
+      aiStatus.textContent = 'Headline suggestions ලැබුනේ නෑ — වැඩිය details (headline/paragraph) එක්ක try again කරන්න.';
+    }
+  } catch(err){
+    aiStatus.textContent = aiErrorMessage(err && err.code);
+  } finally {
+    genHeadlineBtn.disabled = false;
+  }
+});
+
+genCaptionBtn.addEventListener('click', async ()=>{
+  const src = newsInput.value.trim();
+  if(!src){ aiStatus.textContent = 'මුලින්ම article link/facts ටිකක් type කරන්න.'; return; }
+  if(!sampleCap){ aiStatus.textContent = 'මේ view එකේ AI feature එක available නෑ.'; return; }
+  genCaptionBtn.disabled = true;
+  aiStatus.textContent = 'Caption සහ hashtags හදනවා...';
+  try{
+    const prompt = `You write short, factual, high-engagement Facebook captions for a ${CN()} news page called "${state.pageName}".\n\nRead the source notes below. First decide: is this clearly ${CN()}-related news? If unsure, or it could plausibly be ${CN()}-related, treat it as ${CN()}-related — only mark it NOT ${CN()}-related if it is clearly and only about another country with no ${CN()} connection at all.\n\nIf ${CN()}-related, write:\n1. A short Facebook caption (2-4 sentences, conversational, ending with a question that invites comments) — 100% factually accurate to the source notes only, never invent facts, and naturally include 2-4 relevant emojis that fit the topic (pick emojis that actually fit this specific story, e.g. 🇬🇧 🚨 🏛️ 🏠 💷 are just examples).\n2. Exactly 5 relevant hashtags (${CN()} news/politics related, no emojis inside hashtags).\nIf not ${CN()}-related, return an empty caption and empty hashtags array.\n\nSource notes:\n"""\n${src}\n"""\n\nRespond with ONLY this JSON object and nothing else — no explanation, no markdown code fence:\n{"is_uk_news": true, "caption": "caption text here", "hashtags": ["#tag1","#tag2","#tag3","#tag4","#tag5"]}`;
+    const result = await sampleCap.json(prompt, { modelTier: 'default', cache:false });
+    const caption = (result && String(result.caption||'').trim()) || '';
+    const hashtags = Array.isArray(result && result.hashtags) ? result.hashtags.map(h=>String(h||'').trim()).filter(Boolean).slice(0,5) : [];
+    const explicitlyNotUk = !!(result && result.is_uk_news === false);
+    if(caption || hashtags.length){
+      captionOutput.value = caption + (hashtags.length ? ('\n\n' + hashtags.join(' ')) : '');
+      aiStatus.textContent = '✅ Caption එක ready — copy කරගන්න.';
+    }
+    else if(explicitlyNotUk){
+      captionOutput.value = '';
+      aiStatus.textContent = '❌ මේ news එක ' + CN() + ' ගැන නෙවෙයි (වෙන රටක news එකක්). ' + CN() + ' news එකක් දෙන්න.';
+    }
+    else{
+      captionOutput.value = '';
+      aiStatus.textContent = 'Caption ලැබුනේ නෑ — වැඩිය details එක්ක try again කරන්න.';
+    }
+  } catch(err){
+    aiStatus.textContent = aiErrorMessage(err && err.code);
+  } finally {
+    genCaptionBtn.disabled = false;
+  }
+});
+
+genImagePromptBtn.addEventListener('click', async ()=>{
+  const src = newsInput.value.trim();
+  const headline = state.headline.trim();
+  if(!src && !headline){ aiStatus.textContent = 'මුලින්ම article details හෝ headline එකක් දෙන්න.'; return; }
+  if(!sampleCap){ aiStatus.textContent = 'මේ view එකේ AI feature එක available නෑ.'; return; }
+  genImagePromptBtn.disabled = true;
+  aiStatus.textContent = 'Image prompt එක හදනවා...';
+  imagePromptOutput.value = '';
+  try{
+    const prompt = `Write ONE detailed AI image-generation prompt (for Midjourney/DALL-E/Bing Image Creator) for a reference photo to go with this ${CN()} news Facebook post.\n\nStory / headline:\n"""\n${src || headline}\n"""\n${headline ? `Chosen headline: "${headline}"` : ''}\n\nRules for the prompt you write:\n- Describe a realistic, editorial/stock-photography style scene that visually fits this specific story (setting, mood, lighting, composition, camera angle, lens/style keywords).\n- Portrait orientation, suitable as the top photo of a social media news post.\n- Do NOT name or describe the unique likeness of any real, identifiable public figure (no real politician's name or distinguishing appearance) — describe a generic, anonymous person or scene instead (e.g. "a ${CN()} politician at a podium, generic middle-aged man, face not clearly visible" rather than naming someone).\n- No text, no logos, no watermarks in the image.\n- Keep it to 2-4 sentences, written as one single image-generation prompt (not a list, not JSON, not multiple options).\n\nRespond with ONLY the prompt text itself — no quotes, no labels, no extra commentary.`;
+    const result = await sampleCap(prompt, { modelTier: 'default', cache:false });
+    const text = (result && result.text || '').trim();
+    if(text){
+      imagePromptOutput.value = text;
+      aiStatus.textContent = '✅ Image prompt එක ready — copy කරලා ඔබේ image generator එකට paste කරන්න.';
+    } else {
+      aiStatus.textContent = 'Image prompt එකක් ලැබුනේ නෑ — try again.';
+    }
+  } catch(err){
+    aiStatus.textContent = aiErrorMessage(err && err.code);
+  } finally {
+    genImagePromptBtn.disabled = false;
+  }
+});
+const TEMPLATE_INFO = {
+  '1': 'Street / Banner — warm, nostalgic, community-feel photo with a cream banner and serif headline. Good for lighter human-interest or nostalgic stories.',
+  '2': 'Premium Brand — elegant off-white banner, gold hairlines, premium serif font. Good for formal, business, or dignified/official stories.',
+  '3': 'Breaking News — dark card with red "breaking" tag and bold caps headline. Good for urgent, fast-moving, dramatic news.',
+  '4': 'Bold Politics — white banner, bold caps headline, star divider. Good for political statements, policy debates, government topics.',
+  '5': 'Poll / Reaction — white banner, headline plus two reaction buttons (e.g. YES/NO). Good for opinion questions that invite reader votes/comments.',
+  '6': 'Bold Politics 2 — like Bold Politics but with a double-line bar divider. Good for political/controversial topics, especially ones with a clear side to take.',
+  '7': 'Quote Card — full-bleed photo with dark overlay and a large quote mark, headline styled as a quote. Good for a striking image or a statement/quote from a person.',
+  '8': 'Torn Banner — photo on top, white banner with red/blue striped edges and bold condensed navy/red caps headline. Good for hard-hitting social/political debate questions.',
+  '9': 'Dark Card — big photo with a black rounded card overlapping the bottom, bold condensed white/red caps headline. Good for dramatic immigration, crime or policy topics.',
+  '10': 'Overlay Top — full-bleed photo with bold white/yellow caps headline across the upper part and logo bottom-left. Good for then-vs-now comparisons, nostalgia, split or striking images.',
+  '11': 'Poll Icons — full-bleed photo, headline at the bottom, and two round thumbs-up/heart reaction buttons. Good for yes/no opinion polls about a public figure or policy.',
+  '12': 'News Serif — full-bleed photo, red BREAKING NEWS tag and a large white serif headline at the bottom (BBC style). Good for serious, official or breaking political/world news.',
+  '13': 'Poll Footer — full-bleed photo, bold white caps headline with highlighted words, page name centred at the bottom between two lines. Good for opinion questions/polls that invite comments.',
+  '14': 'Tag + Line — full-bleed photo, coloured topic pill, big bold caps headline and a flag-coloured line at the bottom. Good for topic/issue questions (e.g. Brexit, immigration, economy).',
+  '15': 'Flag Edge Caps — full-bleed photo, bold white caps headline with highlighted words at the bottom, flag-coloured side edges and a round flag logo top-right. Good for hard-hitting poll questions about citizenship, immigration or national issues.',
+  '16': 'Split Quote — photo fading into black on the right, big yellow quote mark and white serif quote with the speaker name underneath. Good when the story is a direct quote from a named person.',
+  '17': 'Condensed Center — full-bleed photo, big condensed centred caps headline in white/red/yellow, short accent line, page name pill with logo top-right. Good for yes/no opinion questions on elections, voting and politics.'
+};
+
+suggestTemplateBtn.addEventListener('click', async ()=>{
+  const src = newsInput.value.trim();
+  const headline = state.headline.trim();
+  if(!src && !headline){ aiStatus.textContent = 'මුලින්ම article details හෝ headline එකක් දෙන්න.'; return; }
+  if(!sampleCap){ aiStatus.textContent = 'මේ view එකේ AI feature එක available නෑ.'; return; }
+  suggestTemplateBtn.disabled = true;
+  templateSuggestionBox.style.display = 'none';
+  aiStatus.textContent = 'හොඳම template එක හොයනවා...';
+  try{
+    const tplList = Object.entries(TEMPLATE_INFO).map(([id,desc])=>`${id}: ${desc}`).join('\n');
+    const prompt = `You choose the best Facebook post template for a ${CN()} news page, from this fixed list:\n${tplList}\n\nStory / headline:\n"""\n${src || headline}\n"""\n${headline ? `Chosen headline: "${headline}"` : ''}\n\nPick the single best template id for this story and explain why in one short sentence (in simple English).\n\nRespond with ONLY this JSON object and nothing else — no explanation outside the JSON, no markdown code fence:\n{"template_id": "1", "reason": "short reason here"}`;
+    const result = await sampleCap.json(prompt, { modelTier: 'quick', cache:false });
+    const id = String((result && result.template_id) || '').trim();
+    if(TEMPLATE_INFO[id]){
+      const reason = (result && String(result.reason||'').trim()) || '';
+      templateSuggestionText.innerHTML = '✨ <b>Suggested: ' +
+        (document.querySelector(`.tpl-btn[data-tpl="${id}"]`)?.textContent || ('Template ' + id)) +
+        '</b>' + (reason ? ('<br>' + reason) : '');
+      applyTemplateSuggestionBtn.dataset.tpl = id;
+      templateSuggestionBox.style.display = 'block';
+      aiStatus.textContent = 'ඕන නම් "මේ Template එක Use කරන්න" click කරන්න, නැත්නම් ඔබටම ඕන එකක් තෝරගන්නත් පුළුවන්.';
+    } else {
+      aiStatus.textContent = 'Template suggestion එකක් ලැබුනේ නෑ — try again.';
+    }
+  } catch(err){
+    aiStatus.textContent = aiErrorMessage(err && err.code);
+  } finally {
+    suggestTemplateBtn.disabled = false;
+  }
+});
+
+applyTemplateSuggestionBtn.addEventListener('click', ()=>{
+  const id = applyTemplateSuggestionBtn.dataset.tpl;
+  if(!id) return;
+  const btn = document.querySelector(`.tpl-btn[data-tpl="${id}"]`);
+  if(btn) btn.click();
+  templateSuggestionBox.style.display = 'none';
+});
+
+downloadBtn.addEventListener('click', async ()=>{
+  if(!state.img || !copyrightCheck.checked) return;
+  const filename = 'post-template-' + Date.now() + '.png';
+  downloadBtn.disabled = true;
+  const prevText = downloadBtn.textContent;
+  downloadBtn.textContent = 'Saving...';
+  try{
+    if(!downloadsCap && window.claude && typeof window.claude.use === 'function'){
+      try{ downloadsCap = await window.claude.use('downloads'); }catch(e){ downloadsCap = null; }
+    }
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if(downloadsCap){
+      await downloadsCap.save({ filename, data: blob });
+      statusText.textContent = 'Saved';
+    } else {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = filename; link.href = url;
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 4000);
+      statusText.textContent = 'Downloaded';
+    }
+  } catch(err){
+    console.error('Download failed', err);
+    statusText.textContent = 'Download failed — try again';
+  } finally {
+    downloadBtn.disabled = false;
+    downloadBtn.textContent = prevText;
+    updateDownloadEnabled();
+  }
+});
+
+voicePreviewBtn.addEventListener('click', ()=>{
+  if(!('speechSynthesis' in window)){
+    videoStatus.textContent = 'මේ browser එකේ voice preview support නෑ.';
+    return;
+  }
+  const text = (state.headline || '').trim();
+  if(!text){ videoStatus.textContent = 'මුලින්ම headline එකක් ලියන්න.'; return; }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 0.95;
+  utter.lang = 'en-GB';
+  videoStatus.textContent = '🔊 Playing...';
+  utter.onend = ()=>{ videoStatus.textContent = ''; };
+  window.speechSynthesis.speak(utter);
+});
+
+function pickVideoMimeType(){
+  const candidates = [
+    'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus',
+    'video/webm;codecs=vp9', 'video/webm;codecs=vp8',
+    'video/webm', 'video/mp4'
+  ];
+  if(!window.MediaRecorder) return '';
+  for(const c of candidates){ if(MediaRecorder.isTypeSupported(c)) return c; }
+  return '';
+}
+
+videoBtn.addEventListener('click', async ()=>{
+  if(!state.img || !copyrightCheck.checked) return;
+  if(!window.MediaRecorder || !canvas.captureStream){
+    videoStatus.textContent = 'මේ browser එකේ video export support නෑ.';
+    return;
+  }
+  videoBtn.disabled = true;
+  const prevText = videoBtn.textContent;
+  const durationMs = state.videoDuration * 1000;
+  videoBtn.textContent = 'Video හදනවා... (' + state.videoDuration + 's)';
+  videoStatus.textContent = '';
+
+  const baseZoom = state.imgZoom;
+  const basePan = state.imgPanX;
+  let rafId, startTime;
+  let audioCtx = null, audioSource = null;
+
+  try{
+    const mimeType = pickVideoMimeType();
+    const canvasStream = canvas.captureStream(30);
+    let combinedStream = canvasStream;
+
+    if(voiceoverFile){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const arrBuf = await voiceoverFile.arrayBuffer();
+      const audioBuffer = await audioCtx.decodeAudioData(arrBuf);
+      const dest = audioCtx.createMediaStreamDestination();
+      audioSource = audioCtx.createBufferSource();
+      audioSource.buffer = audioBuffer;
+      audioSource.connect(dest);
+      combinedStream = new MediaStream([
+        ...canvasStream.getVideoTracks(),
+        ...dest.stream.getAudioTracks()
+      ]);
+    }
+
+    const recorder = new MediaRecorder(combinedStream, mimeType ? { mimeType } : undefined);
+    const chunks = [];
+    recorder.ondataavailable = e=>{ if(e.data && e.data.size) chunks.push(e.data); };
+    const stopped = new Promise(resolve=>{ recorder.onstop = resolve; });
+
+    videoAnimActive = true;
+    videoEntranceT = 0;
+    videoOverallT = 0;
+
+    const animate = (now)=>{
+      if(startTime === undefined) startTime = now;
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed/durationMs);
+      const eased = t*t*(3-2*t);
+      state.imgZoom = baseZoom + eased*0.16;
+      state.imgPanX = basePan + eased*10;
+      videoOverallT = t;
+      videoEntranceT = Math.min(1, elapsed/900);
+      draw();
+      if(t < 1){ rafId = requestAnimationFrame(animate); }
+    };
+
+    recorder.start();
+    if(audioSource) audioSource.start(0);
+    rafId = requestAnimationFrame(animate);
+
+    await new Promise(res=>setTimeout(res, durationMs + 80));
+    cancelAnimationFrame(rafId);
+    if(audioSource){ try{ audioSource.stop(); }catch(e){} }
+
+    videoAnimActive = false;
+    state.imgZoom = baseZoom;
+    state.imgPanX = basePan;
+    draw();
+    recorder.stop();
+    await stopped;
+    if(audioCtx){ try{ await audioCtx.close(); }catch(e){} }
+
+    const blob = new Blob(chunks, { type: mimeType || 'video/webm' });
+    const ext = (mimeType && mimeType.includes('mp4')) ? 'mp4' : 'webm';
+    const filename = 'post-video-' + Date.now() + '.' + ext;
+
+    if(!downloadsCap && window.claude && typeof window.claude.use === 'function'){
+      try{ downloadsCap = await window.claude.use('downloads'); }catch(e){ downloadsCap = null; }
+    }
+    const savedNote = voiceoverFile ? ' (voiceover included)' : ' (silent)';
+    if(downloadsCap){
+      await downloadsCap.save({ filename, data: blob });
+      videoStatus.textContent = '✅ Video saved (' + ext.toUpperCase() + ')' + savedNote + '.';
+    } else {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = filename; link.href = url;
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 4000);
+      videoStatus.textContent = '✅ Video downloaded (' + ext.toUpperCase() + ')' + savedNote + '.';
+    }
+  } catch(err){
+    console.error('Video export failed', err);
+    videoStatus.textContent = 'Video හදන්න fail උනා — try again.';
+  } finally {
+    videoAnimActive = false;
+    state.imgZoom = baseZoom;
+    state.imgPanX = basePan;
+    if(audioCtx && audioCtx.state !== 'closed'){ try{ audioCtx.close(); }catch(e){} }
+    draw();
+    videoBtn.disabled = false;
+    videoBtn.textContent = prevText;
+    updateDownloadEnabled();
+  }
+});
+
+const resetBtn = document.getElementById('resetBtn');
+
+function resetAll(){
+  state.pageName = '';
+  state.template = '1';
+  state.fit = 'cover';
+  state.img = null;
+  state.profileImg = null;
+  state.headline = 'Who Remembers The Morning Postman?';
+  state.tag = '';
+  state.wordColors = {};
+  state.paintAuto = true;
+  state.btn1 = '❤️ YES';
+  state.btn2 = '😆 NO';
+  state.imgZoom = 1;
+  state.imgPanX = 0;
+  state.photoRatio = { '1':78, '2':58, '3':52, '4':62, '5':56, '6':62, '7':100, '8':68, '9':76, '10':100, '11':78, '12':100, '13':100, '14':100, '15':100, '16':100, '17':100 };
+  state.textOffset = { '1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'11':0,'12':0,'13':0,'14':0,'15':0,'16':0,'17':0 };
+
+  delete tagInput.dataset.touched_;
+  delete fontSelect.dataset.touched_;
+  delete headlineColorInput.dataset.touched_;
+  delete btn1Input.dataset.touched_;
+  delete btn2Input.dataset.touched_;
+
+  pageNameInput.value = state.pageName;
+  resetCountryUI();
+  headlineInputEl.value = state.headline;
+  btn1Input.value = state.btn1;
+  btn2Input.value = state.btn2;
+  tagInput.value = '';
+
+  document.querySelectorAll('.tpl-btn').forEach(b=>b.classList.toggle('active', b.dataset.tpl==='1'));
+  document.querySelectorAll('.fit-toggle button[data-fit]').forEach(b=>b.classList.toggle('active', b.dataset.fit==='cover'));
+  document.querySelectorAll('#ratioToggle button').forEach(b=>b.classList.toggle('active', b.dataset.ratio==='3:4'));
+  document.querySelectorAll('#durationToggle button').forEach(b=>b.classList.toggle('active', b.dataset.duration==='6'));
+  state.videoDuration = 6;
+
+  voiceoverFile = null;
+  voiceAudioInput.value = '';
+  voiceUploadLabel.textContent = 'Voiceover audio file එකක් upload කරන්න';
+
+  zoomRange.value = 100; zoomVal.textContent = '100%';
+  panRange.value = 0;
+
+  const thumb = document.getElementById('thumb');
+  const uploadLabel = document.getElementById('uploadLabel');
+  const profileThumb = document.getElementById('profileThumb');
+  const profileUploadLabel = document.getElementById('profileUploadLabel');
+  thumb.src = ''; thumb.style.display = 'none';
+  uploadLabel.textContent = 'Image එකක් upload කරන්න (click here)';
+  profileThumb.src = ''; profileThumb.style.display = 'none';
+  profileUploadLabel.textContent = 'Profile photo එකක් upload කරන්න';
+  document.getElementById('imgInput').value = '';
+  document.getElementById('profileImgInput').value = '';
+
+  copyrightCheck.checked = false;
+
+  newsInput.value = '';
+  headlineSuggestions.innerHTML = '';
+  newsSummaryBox.style.display = 'none';
+  captionOutput.value = '';
+  imagePromptOutput.value = '';
+  aiStatus.textContent = '';
+  templateSuggestionBox.style.display = 'none';
+
+  applyTplDefaults('1');
+  currentRatio = '3:4';
+  setRatio('3:4');
+
+  downloadBtn.textContent = 'Image එක upload කරන්න මුලින්ම';
+  downloadBtn.disabled = true;
+  videoBtn.disabled = true;
+  videoBtn.textContent = '🎬 Video Download (animated zoom + effects)';
+  videoStatus.textContent = '';
+  statusText.textContent = 'Image එකක් upload කරන්න';
+  draw();
+}
+
+resetBtn.addEventListener('click', ()=>{
+  if(confirm('Post එක reset කරලා අලුතින් පටන් ගන්නද? දැනට දාපු headline, image, settings සියල්ල clear වෙනවා.')){
+    resetAll();
+  }
+});
+
+
+function CN(){ return (state.country && state.country.label) || 'target country'; }
+const CY=[
+['United Kingdom','uk|britain|great britain|england|gb','uk',['#012169','#C8102E']],
+['United States','usa|us|america|united states of america','us',['#B22234','#3C3B6E']],
+['Canada','ca','ca',['#D80621']],['Australia','au|aus','au',['#012169','#E4002B']],
+['Ireland','ie|eire','v:#169B62,#FFFFFF,#FF883E'],['France','fr','v:#0055A4,#FFFFFF,#EF4135'],
+['Germany','de|deutschland','h:#000000,#DD0000,#FFCE00'],['Italy','it','v:#009246,#FFFFFF,#CE2B37'],
+['Spain','es','h:#AA151B,#F1BF00*2,#AA151B'],['Netherlands','nl|holland','h:#AE1C28,#FFFFFF,#21468B'],
+['Belgium','be','v:#000000,#FAE042,#ED2939'],['Russia','ru','h:#FFFFFF,#0039A6,#D52B1E'],
+['Ukraine','ua','h:#0057B7,#FFD700'],['Poland','pl','h:#FFFFFF,#DC143C'],
+['Sweden','se','n:#006AA7,#FECC00'],['Norway','no','n:#BA0C2F,#FFFFFF,#00205B'],
+['Denmark','dk','n:#C60C30,#FFFFFF'],['Finland','fi','n:#FFFFFF,#003580'],
+['Switzerland','ch','ch',['#D52B1E']],['Japan','jp','jp',['#BC002D']],['China','cn','cn',['#DE2910','#FFDE00']],
+['India','in|bharat','in',['#FF9933','#138808']],['Pakistan','pk','pk',['#01411C']],
+['Bangladesh','bd','bd',['#006A4E','#F42A41']],['Sri Lanka','lk|ceylon','lk',['#8D153A','#FFBE29','#EB7400','#00534E']],
+['United Arab Emirates','uae|ae|dubai','ae',['#00732F','#FF0000']],['Turkey','tr|turkiye','tr',['#E30A17']],
+['Brazil','br','br',['#009C3B','#FFDF00','#002776']],['Mexico','mx','v:#006847,#FFFFFF,#CE1126'],
+['Argentina','ar','h:#74ACDF,#FFFFFF,#74ACDF'],['Nigeria','ng','v:#008751,#FFFFFF,#008751'],
+['Egypt','eg','h:#CE1126,#FFFFFF,#000000'],['Singapore','sg','h:#EF3340,#FFFFFF'],
+['Indonesia','id','h:#FF0000,#FFFFFF'],['Thailand','th','h:#A51931,#F4F5F8,#2D2A4A*2,#F4F5F8,#A51931'],
+['Vietnam','vn','vn',['#DA251D','#FFFF00']]];
+const FLAGS={
+us:(w,h)=>{for(let i=0;i<13;i++){ctx.fillStyle=i%2?'#fff':'#B22234';ctx.fillRect(0,i*h/13,w,h/13+1);}ctx.fillStyle='#3C3B6E';ctx.fillRect(0,0,w*.42,h*7/13);ctx.fillStyle='#fff';for(let r=0;r<4;r++)for(let c=0;c<5;c++){ctx.beginPath();ctx.arc(w*.42*(c+.7)/5.4,h*7/13*(r+.7)/4.4,h*.025,0,7);ctx.fill();}},
+ca:(w,h)=>{ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.fillStyle='#D80621';ctx.fillRect(0,0,w*.25,h);ctx.fillRect(w*.75,0,w*.25,h);drawStar(w/2,h/2,h*.26,'#D80621');},
+au:(w,h)=>{ctx.fillStyle='#012169';ctx.fillRect(0,0,w,h);drawUKFlagRaw(w*.25,h*.25,w*.5,h*.5);[[.25,.75],[.15,.5],[.35,.55],[.25,.9],[.7,.5]].forEach(p=>drawStar(w*(p[0]+.12),h*p[1],h*.06,'#fff'));},
+ch:(w,h)=>{ctx.fillStyle='#D52B1E';ctx.fillRect(0,0,w,h);ctx.fillStyle='#fff';ctx.fillRect(w/2-h*.09,h*.2,h*.18,h*.6);ctx.fillRect(w/2-h*.3,h/2-h*.09,h*.6,h*.18);},
+jp:(w,h)=>{ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.fillStyle='#BC002D';ctx.beginPath();ctx.arc(w/2,h/2,h*.3,0,7);ctx.fill();},
+cn:(w,h)=>{ctx.fillStyle='#DE2910';ctx.fillRect(0,0,w,h);drawStar(w*.17,h*.27,h*.2,'#FFDE00');[[.34,.12],[.4,.22],[.4,.36],[.34,.46]].forEach(p=>drawStar(w*p[0],h*p[1],h*.06,'#FFDE00'));},
+in:(w,h)=>{['#FF9933','#fff','#138808'].forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(0,i*h/3,w,h/3+1);});ctx.strokeStyle='#000080';ctx.lineWidth=Math.max(1,h*.03);ctx.beginPath();ctx.arc(w/2,h/2,h*.14,0,7);ctx.stroke();},
+pk:(w,h)=>{ctx.fillStyle='#01411C';ctx.fillRect(0,0,w,h);ctx.fillStyle='#fff';ctx.fillRect(0,0,w*.25,h);ctx.beginPath();ctx.arc(w*.62,h/2,h*.27,0,7);ctx.fill();ctx.fillStyle='#01411C';ctx.beginPath();ctx.arc(w*.68,h*.44,h*.23,0,7);ctx.fill();drawStar(w*.74,h*.36,h*.09,'#fff');},
+bd:(w,h)=>{ctx.fillStyle='#006A4E';ctx.fillRect(0,0,w,h);ctx.fillStyle='#F42A41';ctx.beginPath();ctx.arc(w*.45,h/2,h*.3,0,7);ctx.fill();},
+lk:(w,h)=>{ctx.fillStyle='#FFBE29';ctx.fillRect(0,0,w,h);const b=h*.06,k=h-2*b;ctx.fillStyle='#00534E';ctx.fillRect(b,b,w*.1,k);ctx.fillStyle='#EB7400';ctx.fillRect(b+w*.1,b,w*.1,k);ctx.fillStyle='#8D153A';ctx.fillRect(b+w*.2,b,w-2*b-w*.2,k);ctx.fillStyle='#FFBE29';const m=w*.62;ctx.beginPath();ctx.ellipse(m,h*.58,w*.1,h*.18,0,0,7);ctx.fill();ctx.beginPath();ctx.arc(m-w*.05,h*.33,h*.1,0,7);ctx.fill();ctx.fillRect(m+w*.07,h*.2,w*.012,h*.5);},
+ae:(w,h)=>{['#00732F','#fff','#000'].forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(0,i*h/3,w,h/3+1);});ctx.fillStyle='#FF0000';ctx.fillRect(0,0,w*.25,h);},
+tr:(w,h)=>{ctx.fillStyle='#E30A17';ctx.fillRect(0,0,w,h);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(w*.38,h/2,h*.25,0,7);ctx.fill();ctx.fillStyle='#E30A17';ctx.beginPath();ctx.arc(w*.44,h/2,h*.2,0,7);ctx.fill();drawStar(w*.6,h/2,h*.09,'#fff');},
+br:(w,h)=>{ctx.fillStyle='#009C3B';ctx.fillRect(0,0,w,h);ctx.fillStyle='#FFDF00';ctx.beginPath();ctx.moveTo(w/2,h*.1);ctx.lineTo(w*.9,h/2);ctx.lineTo(w/2,h*.9);ctx.lineTo(w*.1,h/2);ctx.fill();ctx.fillStyle='#002776';ctx.beginPath();ctx.arc(w/2,h/2,h*.22,0,7);ctx.fill();},
+vn:(w,h)=>{ctx.fillStyle='#DA251D';ctx.fillRect(0,0,w,h);drawStar(w/2,h/2,h*.3,'#FFFF00');}};
+function specColors(sp){ if(!sp) return []; if(/^[hvn]:/.test(sp)) return sp.slice(2).split(',').map(x=>x.split('*')[0]); return []; }
+function drawFlag(cx,cy,w,h){
+  const f=state.country||{};
+  ctx.save(); ctx.translate(cx-w/2,cy-h/2); ctx.beginPath(); ctx.rect(0,0,w,h); ctx.clip();
+  const sp=f.spec;
+  if(state.flagImg){ const im=state.flagImg,r=im.width/im.height; let dw=w,dh=w/r; if(dh<h){dh=h;dw=h*r;} ctx.drawImage(im,(w-dw)/2,(h-dh)/2,dw,dh); }
+  else if(sp==='uk'){ ctx.restore(); drawUKFlagRaw(cx,cy,w,h); return; }
+  else if(sp && /^[hv]:/.test(sp)){
+    const parts=sp.slice(2).split(',').map(x=>{const a=x.split('*');return [a[0],+a[1]||1];}), tot=parts.reduce((a,p)=>a+p[1],0); let pos=0;
+    parts.forEach(p=>{ ctx.fillStyle=p[0]; const q=p[1]/tot; if(sp[0]==='h') ctx.fillRect(0,pos*h,w,q*h+1); else ctx.fillRect(pos*w,0,q*w+1,h); pos+=q; });
+  } else if(sp && sp[0]==='n' && sp[1]===':'){
+    const a=sp.slice(2).split(','), t=h*.18; ctx.fillStyle=a[0]; ctx.fillRect(0,0,w,h); ctx.fillStyle=a[1]; ctx.fillRect(w*.3-t/2,0,t,h); ctx.fillRect(0,h/2-t/2,w,t);
+    if(a[2]){ ctx.fillStyle=a[2]; ctx.fillRect(w*.3-t/4,0,t/2,h); ctx.fillRect(0,h/2-t/4,w,t/2); }
+  } else if(sp && FLAGS[sp]) FLAGS[sp](w,h);
+  else { ctx.fillStyle='#4a4f5a'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#fff'; ctx.font=fontStr('inter',800,Math.round(h*.45)); ctx.textAlign='center'; ctx.fillText((f.label||'?').slice(0,3).toUpperCase(),w/2,h*.65); }
+  ctx.restore();
+  ctx.save(); ctx.strokeStyle='rgba(0,0,0,.25)'; ctx.lineWidth=1; ctx.strokeRect(cx-w/2,cy-h/2,w,h); ctx.restore();
+}
+function pal(){ const c=((state.country&&state.country.colors)||[]).filter(x=>!/^#f{3}(f{3})?$/i.test(x)); return [c[0]||'#16305c', c[1]||c[0]||'#a3312a']; }
+function avatarAt(cx,cy,size,img){
+  ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,size/2,0,Math.PI*2); ctx.clip();
+  if(img){ const ir=img.width/img.height; let dw,dh; if(ir>1){dh=size;dw=size*ir;}else{dw=size;dh=size/ir;} ctx.drawImage(img,cx-dw/2,cy-dh/2,dw,dh); }
+  else drawFlag(cx,cy,size*1.6,size);
+  ctx.restore();
+}
+const _badge1=drawPageBadge;
+function badgeRibbon(x,y,name,av){
+  ctx.font=fontStr('inter',800,24); const tw=ctx.measureText(name).width,h=54,fw=66,w=fw+tw+40,p=pal(),bh=h-7;
+  ctx.fillStyle='#fff'; roundRect(x,y,w,h,10); ctx.fill();
+  ctx.save(); roundRect(x,y,w,h,10); ctx.clip();
+  ctx.fillStyle=p[0]; ctx.fillRect(x,y,fw,bh); ctx.fillRect(x,y+bh,w/2,7); ctx.fillStyle=p[1]; ctx.fillRect(x+w/2,y+bh,w/2,7);
+  ctx.restore();
+  if(av) avatarAt(x+fw/2,y+bh/2,38,av); else drawFlag(x+fw/2,y+bh/2,44,28);
+  ctx.fillStyle='#111'; ctx.textAlign='left'; ctx.fillText(name,x+fw+18,y+bh/2+8);
+}
+function badgeEmblem(x,y,name,av){
+  ctx.font=fontStr('inter',800,24); const tw=ctx.measureText(name).width,r=38,cx=x+r,cy=y+r,capH=46,p=pal(),capW=r+tw+110;
+  ctx.fillStyle=p[0]; roundRect(x+r,cy-capH/2,capW,capH,capH/2); ctx.fill();
+  ctx.fillStyle=textOn(p[0]); ctx.textAlign='left'; ctx.fillText(name,x+2*r+12,cy+8);
+  drawFlag(x+r+capW-38,cy,40,26);
+  ctx.fillStyle=p[1]; ctx.beginPath(); ctx.arc(cx,cy,r+6,0,7); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(cx,cy,r+2,0,7); ctx.fill();
+  avatarAt(cx,cy,r*2-2,av);
+}
+drawPageBadge=function(x,y,name,av){
+  if(!name||!name.trim()) return;
+  if(state.logoStyle==='2') badgeRibbon(x,y,name,av); else if(state.logoStyle==='3') badgeEmblem(x,y,name,av); else _badge1(x,y,name,av);
+};
+const countryInput=document.getElementById('countryInput'), countryStatus=document.getElementById('countryStatus'), flagUploadBox=document.getElementById('flagUploadBox');
+CY.forEach(c=>{ const o=document.createElement('option'); o.value=c[0]; document.getElementById('countryList').appendChild(o); });
+function confirmCountry(){
+  const raw=countryInput.value.trim(), q=raw.toLowerCase();
+  if(!raw){ countryStatus.textContent='රටක නමක් type කරන්න.'; return; }
+  const e=CY.find(c=>c[0].toLowerCase()===q || (c[1].length>2 && c[1].split('|').includes(q)) || c[1].split('|').includes(q));
+  const prevDef=state.country.label+' Across';
+  state.flagImg=null; document.getElementById('flagThumb').style.display='none';
+  if(e && e.length){
+    const sp=e[2]; state.country={label:e[0],spec:sp,colors:e[3]||specColors(sp)};
+    countryInput.value=e[0]; flagUploadBox.style.display='none';
+    countryStatus.textContent='✅ '+e[0]+' — flag එක සියලුම තැන්වල දැන් වැටෙනවා';
+  } else {
+    state.country={label:raw,spec:null,colors:[]}; flagUploadBox.style.display='block';
+    countryStatus.textContent='⚠️ "'+raw+'" list එකේ නෑ — පහළින් flag image එකක් upload කරන්න (නැත්නම් letters badge එකක් පෙන්නයි). News check එක කොහොමත් '+raw+' ට වැඩ කරයි.';
+  }
+  if(!tagInput.dataset.touched_ && state.template==='2'){ tagInput.value=state.country.label+' Across'; state.tag=tagInput.value; }
+  draw();
+}
+document.getElementById('countryConfirmBtn').addEventListener('click',confirmCountry);
+countryInput.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); confirmCountry(); } });
+countryInput.addEventListener('change',confirmCountry);
+wireUpload('flagUploadBox','flagImgInput','flagThumb','flagUploadLabel',(im)=>{ state.flagImg=im; draw(); });
+document.querySelectorAll('#logoToggle button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#logoToggle button').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+  state.logoStyle=b.dataset.logo; draw();
+}));
+function resetCountryUI(){
+  state.country={label:'United Kingdom',spec:'uk',colors:['#012169','#C8102E']}; state.flagImg=null; state.logoStyle='1';
+  countryInput.value='United Kingdom'; countryStatus.textContent='✅ United Kingdom — flag එක සක්‍රීයයි'; flagUploadBox.style.display='none';
+  document.querySelectorAll('#logoToggle button').forEach(x=>x.classList.toggle('active',x.dataset.logo==='1'));
+}
+new MutationObserver(()=>{ aiStatus.style.color=aiStatus.textContent.startsWith('❌')?'#d62828':''; aiStatus.style.fontWeight=aiStatus.textContent.startsWith('❌')?'700':''; }).observe(aiStatus,{childList:true,characterData:true,subtree:true});
+
+document.fonts.ready.then(draw);
+draw();
+</script>
+</body>
+</html>
